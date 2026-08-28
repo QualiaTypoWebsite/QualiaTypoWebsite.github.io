@@ -1,0 +1,124 @@
+/*
+  The reading page: toolbar, stage, thumbnail strip.
+
+  The reader fills the viewport below the top bar, and the stage takes whatever
+  space the toolbar and strip leave. The soft glow behind the book is mixed
+  from --accent, which Reader.tsx sets per volume.
+*/
+.reader {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - var(--bar-h));
+  background:
+    radial-gradient(120% 90% at 50% -10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%),
+    var(--paper);
+}
+
+.reader:fullscreen { min-height: 100svh; }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  padding: 0.85rem clamp(1rem, 4vw, 2rem);
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--ink-soft);
+  margin-right: auto;
+}
+.back:hover { color: var(--ink); }
+
+.counter {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  min-width: 12ch;
+  text-align: center;
+}
+
+.tool {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: border-color 0.2s var(--ease-out), color 0.2s var(--ease-out),
+    background 0.2s var(--ease-out), transform 0.2s var(--ease-spring);
+}
+.tool:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  transform: translateY(-1px);
+}
+.tool:disabled { opacity: 0.35; cursor: default; }
+.tool.on { border-color: var(--accent); color: var(--accent); }
+
+.stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: clamp(0.75rem, 3vh, 2rem) 0;
+  overflow: auto;
+}
+
+.hint {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  padding-bottom: 0.9rem;
+}
+
+.strip {
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding: 0.85rem clamp(1rem, 4vw, 2rem);
+  border-top: 1px solid var(--rule);
+  background: var(--paper-sunk);
+  scrollbar-width: thin;
+}
+
+.thumb {
+  flex: 0 0 auto;
+  width: 58px;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 2px;
+  overflow: hidden;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  opacity: 0.62;
+  transition: opacity 0.2s var(--ease-out), outline-color 0.2s var(--ease-out),
+    transform 0.2s var(--ease-spring);
+}
+.thumb:hover { opacity: 1; transform: translateY(-3px); }
+.thumb.current { opacity: 1; outline-color: var(--accent); }
+.thumb img { width: 100%; aspect-ratio: 1400 / 1986; object-fit: cover; display: block; }
+
+.message {
+  padding: 5rem clamp(1rem, 4vw, 2rem);
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 620px) {
+  .counter { min-width: 0; font-size: 0.75rem; }
+  .back span { display: none; }
+}

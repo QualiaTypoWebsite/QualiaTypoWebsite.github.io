@@ -1,0 +1,94 @@
+{
+  "_placeholder": "PLACEHOLDER COPY — replace the strings in this file and in el.json.",
+  "meta": {
+    "title": "Qualia Typo",
+    "tagline": "The art magazine of the Qualia Art Youth Group",
+    "description": "Read and download every volume of Qualia Typo."
+  },
+  "nav": {
+    "home": "Home",
+    "library": "Library",
+    "about": "The magazine",
+    "group": "About us",
+    "contact": "Contact",
+    "switchLanguage": "Αλλαγή στα ελληνικά",
+    "menu": "Menu"
+  },
+  "home": {
+    "startReading": "Start reading vol. 1",
+    "browseLibrary": "Browse the library",
+    "intro": "Qualia Typo is an independent art magazine made entirely by young volunteers. Each volume gathers writing, illustration and experimental design around a single theme.",
+    "coversLabel": "Qualia Typo volumes",
+    "scrollHint": "Scroll to read more"
+  },
+  "about": {
+    "eyebrow": "The project",
+    "title": "About Qualia Typo",
+    "body": [
+      "PLACEHOLDER: Qualia Typo began as a small idea between friends who wanted somewhere to put their work — somewhere without algorithms and without deadlines.",
+      "PLACEHOLDER: Every issue is built around a theme chosen collectively. Members contribute writing, photography, collage and illustration, and the whole group edits it together.",
+      "PLACEHOLDER: The magazine is free in digital form. Read it online, or download it and print your own copy."
+    ]
+  },
+  "group": {
+    "eyebrow": "The group",
+    "title": "About us",
+    "body": [
+      "PLACEHOLDER: The Qualia Art Youth Group is a voluntary collective of young people working across visual art, writing and design.",
+      "PLACEHOLDER: We run horizontally and without funding. If you would like to take part in a future issue, get in touch."
+    ]
+  },
+  "library": {
+    "eyebrow": "Library",
+    "title": "Every volume",
+    "subtitle": "Read online, or download the PDF.",
+    "read": "Read",
+    "download": "Download PDF",
+    "pages": "{{count}} pages",
+    "comingSoon": "Coming soon",
+    "comingSoonNote": "Volume 4 is in the works.",
+    "volumeLabel": "Volume {{n}}"
+  },
+  "reader": {
+    "back": "Back to the library",
+    "pageOf": "Page {{current}} of {{total}}",
+    "previous": "Previous page",
+    "next": "Next page",
+    "download": "Download PDF",
+    "thumbnails": "Pages",
+    "toggleThumbnails": "Show pages",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "loading": "Loading volume…",
+    "notFound": "That volume isn't available yet.",
+    "hint": "Use the arrow keys, or drag a page."
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Write to us",
+    "intro": "For collaborations, contributing to a future issue, or anything else.",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send message",
+    "orWrite": "Or write to us directly at",
+    "opening": "Opening your email app…",
+    "errors": {
+      "name": "Please enter your name.",
+      "email": "Please enter a valid email address.",
+      "message": "Please write a message."
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link you followed doesn't lead anywhere.",
+    "home": "Back to the homepage"
+  },
+  "footer": {
+    "rights": "Qualia Art Youth Group",
+    "madeWith": "Made by volunteers."
+  }
+}

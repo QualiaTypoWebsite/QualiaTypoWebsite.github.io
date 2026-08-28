@@ -1,0 +1,197 @@
+/*
+  The flipbook, and the 3D that makes a page turn.
+
+  Three properties do the real work:
+
+    perspective          on .book, so rotation has depth instead of looking
+                         like a flat squash
+    transform-style      preserve-3d on .leaf, so its two faces stay in 3D
+                         space rather than being flattened
+    backface-visibility  hidden on each .face, so you see only the face
+                         pointing at you
+
+  .leaf.settling is the only timed transition. While you are dragging, the
+  angle is set directly from the pointer, and a transition there would lag
+  behind your finger.
+
+  .shade darkens each face as the leaf stands upright, which is what makes the
+  turn read as a solid sheet moving through light.
+*/
+.stage {
+  --sheet-w: 1400;
+  --sheet-h: 1986;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: clamp(0.5rem, 3vw, 2.5rem) 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.book {
+  position: relative;
+  display: flex;
+  aspect-ratio: var(--book-aspect);
+  width: min(var(--book-width), 96%);
+  transform-origin: center;
+  transform: scale(var(--zoom, 1));
+  transition: transform 0.35s var(--ease-out);
+  /* A deep perspective keeps the turning leaf from looking like it is
+     bulging toward the reader on wide screens. */
+  perspective: 2600px;
+  perspective-origin: center;
+  touch-action: pan-y;
+}
+
+.board {
+  position: relative;
+  flex: 1 1 50%;
+  min-width: 0;
+  background: var(--paper-sunk);
+  overflow: hidden;
+}
+
+.board.single { flex-basis: 100%; }
+
+/* An absent page is bare board, not a blank sheet. */
+.board.empty { background: transparent; box-shadow: none; }
+
+.board.left {
+  border-radius: 4px 0 0 4px;
+  box-shadow: -14px 12px 32px -20px rgba(26, 22, 18, 0.55);
+}
+.board.right {
+  border-radius: 0 4px 4px 0;
+  box-shadow: 14px 12px 32px -20px rgba(26, 22, 18, 0.55);
+}
+
+.board img,
+.face img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* The gutter shadow: paper curving into the spine. */
+.gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 8%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 3;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 22, 18, 0) 0%,
+    rgba(26, 22, 18, 0.13) 45%,
+    rgba(26, 22, 18, 0.18) 50%,
+    rgba(26, 22, 18, 0.13) 55%,
+    rgba(26, 22, 18, 0) 100%
+  );
+}
+
+.leaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 4;
+  transform-style: preserve-3d;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.leaf.full { width: 100%; }
+
+.leaf.next {
+  right: 0;
+  transform-origin: left center;
+}
+.leaf.prev {
+  left: 0;
+  transform-origin: right center;
+}
+
+/* Only the release animation is timed; while dragging, the angle tracks the
+   pointer directly and any transition would lag behind the finger. */
+.leaf.settling { transition: transform 0.52s var(--ease-out); }
+
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  background: #fff;
+}
+
+.face.front { transform: rotateY(0deg); }
+.face.back { transform: rotateY(180deg); }
+
+.leaf.next .face.front { border-radius: 0 4px 4px 0; }
+.leaf.next .face.back { border-radius: 4px 0 0 4px; }
+.leaf.prev .face.front { border-radius: 4px 0 0 4px; }
+.leaf.prev .face.back { border-radius: 0 4px 4px 0; }
+
+/* Darkens the leaf as it stands upright, so the turn reads as a solid sheet
+   moving through light rather than a flat image rotating. */
+.shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(26, 22, 18, 1);
+  opacity: calc(var(--lift, 0) * 0.42);
+}
+
+.hit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 32%;
+  z-index: 5;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.hit.back { left: 0; }
+.hit.forward { right: 0; }
+.hit:disabled { cursor: default; }
+
+.hit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+}
+.hit.forward::after {
+  background: linear-gradient(270deg, rgba(26, 22, 18, 0.1), transparent 70%);
+}
+.hit.back::after {
+  background: linear-gradient(90deg, rgba(26, 22, 18, 0.1), transparent 70%);
+}
+.hit:hover:not(:disabled)::after { opacity: 1; }
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, #f4f0ea 30%, #fdfbf8 50%, #f4f0ea 70%);
+  background-size: 220% 100%;
+  animation: sweep 1.3s ease-in-out infinite;
+}
+
+@keyframes sweep {
+  from { background-position: 180% 0; }
+  to { background-position: -80% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaf.settling { transition-duration: 0.001ms; }
+  .placeholder { animation: none; }
+}

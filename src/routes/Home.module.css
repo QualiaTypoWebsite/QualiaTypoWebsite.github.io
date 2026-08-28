@@ -1,0 +1,89 @@
+/*
+  The homepage.
+
+  The hero is a two-column grid that collapses to one column under 940px.
+  Each scroll section carries a different pastel wash, fading in from the paper
+  colour so the sections read as a gentle sequence rather than as blocks.
+
+  scroll-margin-top on .section keeps the sticky top bar from covering a
+  heading when you jump to it from the nav.
+*/
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  min-height: calc(100svh - var(--bar-h));
+  padding: clamp(2rem, 6vh, 5rem) 0 clamp(3rem, 8vh, 6rem);
+}
+
+.tagline {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 1.4rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin: 2.1rem 0 2rem;
+}
+
+.intro {
+  max-width: 44ch;
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+}
+
+.scrollHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 2.6rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-decoration: none;
+}
+
+.scrollHint span[aria-hidden] { animation: nudge 1.9s var(--ease-out) infinite; }
+
+@keyframes nudge {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(4px); opacity: 1; }
+}
+
+.section {
+  padding: clamp(4rem, 11vh, 8rem) 0;
+  border-top: 1px solid var(--rule);
+  scroll-margin-top: var(--bar-h);
+}
+
+.sectionInner {
+  display: grid;
+  grid-template-columns: minmax(0, 26ch) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+}
+
+.sectionTitle { font-size: clamp(1.7rem, 3.4vw, 2.5rem); }
+
+.prose { max-width: 62ch; font-size: 1.04rem; color: var(--ink-soft); }
+.prose p:last-child { margin-bottom: 0; }
+
+/* Each section carries a different pastel wash, tinting the paper without
+   ever competing with the covers. */
+.about { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--blush) 42%, var(--paper))); }
+.group { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--periwinkle) 45%, var(--paper))); }
+.contact { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--celadon) 45%, var(--paper))); }
+
+@media (max-width: 940px) {
+  .hero { grid-template-columns: 1fr; min-height: 0; gap: 2.5rem; }
+  .sectionInner { grid-template-columns: 1fr; }
+  .covers { max-width: 460px; }
+}

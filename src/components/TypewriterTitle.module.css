@@ -1,0 +1,59 @@
+/*
+  The homepage title.
+
+  min-height on .title reserves the finished line height, so the buttons below
+  do not jump downward as the title types itself in.
+
+  The cursor uses steps(1, end) rather than a fade: a real terminal cursor
+  snaps on and off, and easing it looks like a pulse instead.
+*/
+.title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.9rem, 8.5vw, 6.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  margin: 0;
+  /* Reserves the finished width so the buttons below never jump while
+     the title types itself in. */
+  min-height: 1.05em;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.07em;
+  height: 0.86em;
+  margin-left: 0.06em;
+  background: var(--vol-1);
+  vertical-align: baseline;
+  transform: translateY(0.06em);
+}
+
+.cursor.blinking { animation: blink 1.05s steps(1, end) infinite; }
+.cursor.fading { animation: fade 0.5s var(--ease-out) forwards; }
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes fade {
+  to { opacity: 0; }
+}
+
+/* The full stop drops in rather than simply appearing. */
+.stop {
+  display: inline-block;
+  animation: drop 0.42s var(--ease-spring);
+  color: var(--vol-1);
+}
+
+@keyframes drop {
+  from { transform: translateY(-0.35em) scale(0.6); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor.blinking, .cursor.fading { animation: none; opacity: 0; }
+  .stop { animation: none; }
+}

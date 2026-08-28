@@ -1,1 +1,10 @@
 local-notes/*
+node_modules/
+dist/
+
+# Page images are generated from the PDFs by `npm run pages`; CI rebuilds them
+# on deploy, so they are never committed.
+public/magazines/
+
+# TypeScript incremental build cache
+*.tsbuildinfo

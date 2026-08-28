@@ -1,0 +1,56 @@
+/*
+  Button styles, shared by all three Button.tsx exports.
+
+  .base holds the shape and motion; .primary / .secondary / .quiet only change
+  colour. .primary picks up --accent on hover, so a button inside a volume's
+  page turns that volume's cover colour without any extra CSS.
+*/
+.base {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  padding: 0.85rem 1.7rem;
+  font-size: 0.98rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.22s var(--ease-spring), background 0.22s var(--ease-out),
+    border-color 0.22s var(--ease-out), color 0.22s var(--ease-out),
+    box-shadow 0.22s var(--ease-out);
+}
+
+.base:hover { transform: translateY(-2px); }
+.base:active { transform: translateY(0); }
+.base:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+.primary {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 6px 20px -12px rgba(26, 22, 18, 0.9);
+}
+.primary:hover { background: var(--accent); box-shadow: 0 12px 26px -14px var(--accent); }
+
+.secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.secondary:hover { background: var(--ink); color: var(--paper); }
+
+.quiet {
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  border-color: var(--rule);
+  padding: 0.6rem 1.15rem;
+  font-size: 0.9rem;
+}
+.quiet:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .base:hover { transform: none; }
+}
