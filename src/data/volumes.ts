@@ -22,7 +22,7 @@ export const VOLUME_META: VolumeMeta[] = [
   { volume: 1, accent: '#e8018a', year: '2023' },
   { volume: 2, accent: '#2a3784', year: '2024' },
   { volume: 3, accent: '#9ac01b', year: '2024' },
-  { volume: 4, accent: '#c8623b', year: '2025' },
+  { volume: 4, accent: '#f5e849', year: '2025' },
 ];
 
 /** How many volumes the site plans for, published or not. */

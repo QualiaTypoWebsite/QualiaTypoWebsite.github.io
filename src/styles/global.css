@@ -20,7 +20,7 @@
   --vol-1: #e8018a;
   --vol-2: #2a3784;
   --vol-3: #9ac01b;
-  --vol-4: #c8623b;
+  --vol-4: #f5e849;
 
   /* Set per-volume on the reader and library rows. Defaults to vol 1. */
   --accent: var(--vol-1);
