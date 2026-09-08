@@ -65,6 +65,7 @@ Without it the site runs but every magazine page is a broken image.
 - **Pure logic lives in its own file with tests** — see `pagination.ts`,
   `paths.ts`, `mailto.ts`. Components stay thin enough to read.
 - Keep `docs/ARCHITECTURE.md` current when files are added or moved.
+- Keep this file `CLAUDE.md` up-to-date with the latest important changes or conventions when files are added, moved or modded. Only when it is necessary.
 
 ## Still outstanding
 
