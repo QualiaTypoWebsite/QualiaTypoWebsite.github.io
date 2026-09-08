@@ -6,7 +6,14 @@ GitHub Pages at <https://qualiatypowebsite.github.io/>.
 
 ## Running it locally
 
+**Node 20.19+ is required** (22 recommended — that is what CI uses, and what
+`.nvmrc` selects). Vite 8 pulls in Rolldown, which imports `styleText` from
+`node:util`; on Node 18 `npm run dev` dies with
+`does not provide an export named 'styleText'`. With `nvm`, run `nvm install`
+then `nvm use` in this directory.
+
 ```bash
+nvm use         # or otherwise switch to Node 22
 npm install
 npm run pages   # renders the PDFs into page images (needed once, and after adding a volume)
 npm run dev     # http://localhost:5173

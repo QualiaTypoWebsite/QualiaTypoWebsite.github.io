@@ -24,9 +24,10 @@ jobs:
       # deprecation warning on every run.
       - uses: actions/checkout@v5
 
+      # Node version comes from .nvmrc, so local dev (nvm) and CI stay in lockstep.
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
       # Renders page images at deploy time instead of committing them. Ubuntu's

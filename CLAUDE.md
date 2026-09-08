@@ -32,7 +32,13 @@ npm test        # vitest, 57 tests
 npm run build   # tsc + vite build into dist/
 ```
 
-`npm run pages` needs `poppler-utils` and `ImageMagick` installed system-wide.
+**Node 20.19+ is required** (CI and `.nvmrc` use 22). Vite 8 / Rolldown import
+`styleText` from `node:util`, absent before Node 20.19, so on older Node every
+`npm` script fails with `does not provide an export named 'styleText'`.
+`.npmrc` sets `engine-strict=true` so `npm install` refuses old Node outright.
+
+`npm run pages` needs `poppler-utils` and `ImageMagick` installed system-wide
+(either major version — the script auto-detects `magick` vs `convert`/`identify`).
 Without it the site runs but every magazine page is a broken image.
 
 ## Decisions already made — don't quietly reverse these
