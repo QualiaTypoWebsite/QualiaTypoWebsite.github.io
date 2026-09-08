@@ -10,7 +10,11 @@
  * These are build artifacts and are not committed; CI regenerates them on
  * deploy. Run locally with `npm run pages` before `npm run dev`.
  *
- * Requires poppler-utils (pdftoppm) and ImageMagick (magick) on PATH.
+ * Requires poppler-utils (pdftoppm) and ImageMagick on PATH. Either ImageMagick
+ * major version works: v7 exposes a single `magick` command, while v6 — still
+ * what Debian/Ubuntu's `imagemagick` package installs, including on the GitHub
+ * Pages runner — exposes `convert` and `identify` as separate binaries and has
+ * no `magick`. resolveImageMagick() picks whichever is present.
  */
 import { execFile } from 'node:child_process';
 import { copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
@@ -34,12 +38,41 @@ export function volumeNumberFrom(filename) {
   return match ? Number(match[1]) : null;
 }
 
-async function requireTool(bin, hint) {
+async function hasBin(bin) {
   try {
     await run('sh', ['-c', `command -v ${bin}`]);
+    return true;
   } catch {
+    return false;
+  }
+}
+
+async function requireTool(bin, hint) {
+  if (!(await hasBin(bin))) {
     throw new Error(`Missing "${bin}". Install it first: ${hint}`);
   }
+}
+
+/**
+ * Resolves how to invoke ImageMagick on this machine. Returns the binary and
+ * any leading args for the two ways the script uses it: a plain conversion and
+ * an `identify`. On v7 both go through `magick` ("magick …", "magick identify
+ * …"); on v6 they are the standalone `convert` and `identify` commands. The
+ * remaining arguments the script passes (-resize, -quality, -define, -format)
+ * are identical across v6 and v7.
+ */
+async function resolveImageMagick() {
+  if (await hasBin('magick')) {
+    return { convert: ['magick'], identify: ['magick', 'identify'] };
+  }
+  if (await hasBin('convert')) {
+    return { convert: ['convert'], identify: ['identify'] };
+  }
+  throw new Error(
+    'Missing ImageMagick. Install it first: ' +
+      'Fedora: sudo dnf install ImageMagick; ' +
+      'Debian/Ubuntu: sudo apt-get install imagemagick',
+  );
 }
 
 async function pageCount(pdf) {
@@ -58,7 +91,7 @@ async function inBatches(items, worker) {
   await Promise.all(runners);
 }
 
-async function renderVolume(pdf, volume) {
+async function renderVolume(pdf, volume, im) {
   const outDir = path.join(OUT_DIR, `vol-${volume}`);
   const pages = await pageCount(pdf);
   console.log(`vol ${volume}: ${pages} pages -> ${outDir}`);
@@ -82,17 +115,19 @@ async function renderVolume(pdf, volume) {
     async ({ file, index }) => {
       const n = String(index + 1).padStart(3, '0');
       const src = path.join(tmp, file);
-      await run('magick', [src, '-resize', `${READ_WIDTH}x`, '-quality', '82',
+      await run(im.convert[0], [...im.convert.slice(1), src,
+        '-resize', `${READ_WIDTH}x`, '-quality', '82',
         '-define', 'webp:method=6', path.join(outDir, `page-${n}.webp`)]);
-      await run('magick', [src, '-resize', `${THUMB_WIDTH}x`, '-quality', '72',
+      await run(im.convert[0], [...im.convert.slice(1), src,
+        '-resize', `${THUMB_WIDTH}x`, '-quality', '72',
         path.join(outDir, `thumb-${n}.webp`)]);
     },
   );
 
   // Page geometry drives the flipbook's aspect ratio, so read it from the art
   // itself rather than assuming A5.
-  const { stdout } = await run('magick', ['identify', '-format', '%w %h',
-    path.join(outDir, 'page-001.webp')]);
+  const { stdout } = await run(im.identify[0], [...im.identify.slice(1),
+    '-format', '%w %h', path.join(outDir, 'page-001.webp')]);
   const [width, height] = stdout.trim().split(/\s+/).map(Number);
 
   await rm(tmp, { recursive: true, force: true });
@@ -109,7 +144,7 @@ async function renderVolume(pdf, volume) {
 
 async function main() {
   await requireTool('pdftoppm', 'Fedora: sudo dnf install poppler-utils');
-  await requireTool('magick', 'Fedora: sudo dnf install ImageMagick');
+  const im = await resolveImageMagick();
 
   if (!existsSync(SRC_DIR)) throw new Error(`No ${SRC_DIR} directory found`);
 
@@ -125,7 +160,7 @@ async function main() {
 
   const results = [];
   for (const { file, volume } of pdfs) {
-    results.push(await renderVolume(path.join(SRC_DIR, file), volume));
+    results.push(await renderVolume(path.join(SRC_DIR, file), volume, im));
   }
 
   // An index of what actually exists, so the app never links a missing volume.

@@ -19,15 +19,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # v5 of these actions runs natively on the runner's Node 24; v4 targets
+      # Node 20, which the runner now force-migrates while printing a
+      # deprecation warning on every run.
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
 
-      # The runner ships poppler-utils and ImageMagick, so page images are
-      # rendered here at deploy time instead of being committed to the repo.
+      # Renders page images at deploy time instead of committing them. Ubuntu's
+      # `imagemagick` package is ImageMagick 6 (the `convert`/`identify`
+      # binaries, no `magick`); scripts/build-pages.mjs handles either major
+      # version.
       - name: Install PDF tooling
         run: sudo apt-get update && sudo apt-get install -y poppler-utils imagemagick
 
