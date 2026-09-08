@@ -34,7 +34,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: var(--font-display);
+  /* Matches the homepage hero title — both render the site's name. */
+  font-family: var(--font-title);
   font-size: 0.98rem;
   letter-spacing: -0.02em;
   text-decoration: none;

@@ -8,7 +8,8 @@
   snaps on and off, and easing it looks like a pulse instead.
 */
 .title {
-  font-family: var(--font-display);
+  /* The wordmark's own face (--font-title), not the site's display mono. */
+  font-family: var(--font-title);
   font-weight: 500;
   font-size: clamp(2.9rem, 8.5vw, 6.4rem);
   line-height: 1.02;

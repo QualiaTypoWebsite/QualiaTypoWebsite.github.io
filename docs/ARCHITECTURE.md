@@ -61,7 +61,7 @@ Follow these seven files in this order and the whole project will make sense.
 
 | File | What it does |
 |------|--------------|
-| `index.html` | The single HTML page. Loads Google Fonts and `src/main.tsx`. Everything else is built by JavaScript. |
+| `index.html` | The single HTML page. Loads the Google-hosted body fonts, preloads the self-hosted wordmark font, and pulls in `src/main.tsx`. Everything else is built by JavaScript. |
 | `vite.config.ts` | Build configuration. Also contains the small plugin that copies `index.html` to `404.html`, which is what makes deep links work on GitHub Pages. |
 | `tsconfig.json` | TypeScript settings. `strict: true`, so the compiler catches a lot before the browser ever does. |
 | `package.json` | Dependencies and the `npm run …` commands. |
@@ -72,6 +72,15 @@ Follow these seven files in this order and the whole project will make sense.
 | File | What it does |
 |------|--------------|
 | `build-pages.mjs` | Turns each PDF into web images. Uses `pdftoppm` to render pages, then ImageMagick to make a 1400 px reading image and a 240 px thumbnail each. Writes `meta.json` per volume and an `index.json` listing every volume that exists. Also copies the PDF itself so the Download button has something to point at. |
+
+### `public/fonts/` — the one self-hosted typeface
+
+| File | What it does |
+|------|--------------|
+| `source-sans-3-*.woff2` | Source Sans 3, variable (weights 200–900), used **only** for the words "Qualia Typo" — the homepage hero title and the top bar wordmark. One file per unicode range (latin, latin-ext, greek); the browser fetches only what a page needs, which in practice is the ~29 KB latin file. The `@font-face` rules are in `global.css`. |
+| `OFL.txt` | The SIL Open Font License the typeface ships under. It stays next to the files. |
+
+Unlike `public/magazines/`, these **are** committed — nothing regenerates them.
 
 ### `src/` — top level
 
@@ -176,6 +185,11 @@ of the way and it completes; release earlier and it springs back.
 | File | What it does |
 |------|--------------|
 | `global.css` | The design tokens — every colour, font and easing curve in the project is defined here as a CSS variable. **Change the site's look from this file.** |
+
+The three fonts are `--font-display` (DM Mono, the site's headings and small
+caps), `--font-body` (Inter, everything you read) and `--font-title` (Source
+Sans 3, the wordmark and nothing else). `--font-title` is kept separate on
+purpose: restyling the site's name should never drag the body copy with it.
 
 Everything else is a `.module.css` file sitting next to its component. CSS
 Modules means class names are scoped automatically: `.title` in

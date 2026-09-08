@@ -55,6 +55,10 @@ Without it the site runs but every magazine page is a broken image.
   for a dependency without asking.
 - **The contact form uses `mailto:`,** by the owner's explicit choice. It sends
   nothing to any third-party service. Don't add a form backend.
+- **Source Sans 3 is self-hosted in `public/fonts/` and used only for the
+  wordmark** ("Qualia Typo" — the hero title and the top bar), through the
+  `--font-title` token. Body and display type stay on the Google-hosted Inter
+  and DM Mono. Those font files are committed, unlike the page images.
 - **Vite/Vitest/React Router are pinned to exact versions** that are free of the
   CVEs `npm audit` flagged. Keep `npm audit` at zero.
 

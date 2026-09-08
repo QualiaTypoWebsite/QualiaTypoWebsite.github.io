@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Qualia Typo</title>
     <meta name="description" content="Qualia Typo — the art magazine of the Qualia Art Youth Group. Read and download every volume." />
+    <!-- The wordmark's own face, self-hosted in public/fonts. Preloaded because
+         the homepage hero title is the first thing on screen; the other
+         unicode-range subsets declared in global.css load only on demand. -->
+    <link
+      rel="preload"
+      href="/fonts/source-sans-3-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
