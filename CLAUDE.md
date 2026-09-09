@@ -28,7 +28,7 @@ styling is hand-written on purpose, for control over the typography.
 ```bash
 npm run pages   # render the PDFs into page images — run once after cloning
 npm run dev     # dev server on http://localhost:5173
-npm test        # vitest, 57 tests
+npm test        # vitest, 48 tests
 npm run build   # tsc + vite build into dist/
 ```
 
@@ -53,8 +53,12 @@ Without it the site runs but every magazine page is a broken image.
 - **The flipbook is custom.** It was written rather than taken from a library
   because the available ones are canvas-based and feel clunky. Don't swap it
   for a dependency without asking.
-- **The contact form uses `mailto:`,** by the owner's explicit choice. It sends
-  nothing to any third-party service. Don't add a form backend.
+- **There is no contact form.** It was removed in favour of four round social
+  buttons (Facebook, Instagram, Linktree, email) in the footer, by the owner's
+  explicit choice — the footer is where visitors look for these, and a whole
+  homepage section for four icons was more weight than they deserve. The site
+  still sends nothing to any third-party service: the email button is a plain
+  `mailto:`. Don't add a form backend, and don't reinstate the form.
 - **Source Sans 3 is self-hosted in `public/fonts/` and used only for the
   wordmark** ("Qualia Typo" — the hero title and the top bar), through the
   `--font-title` token. Body and display type stay on the Google-hosted Inter
@@ -73,7 +77,7 @@ Without it the site runs but every magazine page is a broken image.
 - **Every animation needs a `prefers-reduced-motion` path.** Use the
   `usePrefersReducedMotion` hook and render the finished state.
 - **Pure logic lives in its own file with tests** — see `pagination.ts`,
-  `paths.ts`, `mailto.ts`. Components stay thin enough to read.
+  `paths.ts`. Components stay thin enough to read.
 - Keep `docs/ARCHITECTURE.md` current when files are added or moved.
 - Keep this file `CLAUDE.md` up-to-date with the latest important changes or conventions when files are added, moved or modded. Only when it is necessary.
 
@@ -84,3 +88,6 @@ Without it the site runs but every magazine page is a broken image.
 - Volume 4 does not exist. Dropping `QUALIA 4.pdf` into `assets/magazine_vols/`
   and running `npm run pages` publishes it — no code change needed.
 - Volume years in `src/data/volumes.ts` were guessed and need confirming.
+- **The Facebook, Instagram and Linktree URLs in `src/data/socials.ts` are
+  placeholders** ending in `PLACEHOLDER` and lead nowhere. They need the
+  group's real profile URLs.

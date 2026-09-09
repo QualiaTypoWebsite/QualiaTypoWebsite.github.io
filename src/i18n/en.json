@@ -65,22 +65,12 @@
     "notFound": "That volume isn't available yet.",
     "hint": "Use the arrow keys, or drag a page."
   },
-  "contact": {
-    "eyebrow": "Contact",
-    "title": "Write to us",
-    "intro": "For collaborations, contributing to a future issue, or anything else.",
-    "name": "Name",
-    "email": "Email",
-    "subject": "Subject",
-    "message": "Message",
-    "send": "Send message",
-    "orWrite": "Or write to us directly at",
-    "opening": "Opening your email app…",
-    "errors": {
-      "name": "Please enter your name.",
-      "email": "Please enter a valid email address.",
-      "message": "Please write a message."
-    }
+  "social": {
+    "findUs": "Find us",
+    "facebook": "Qualia Typo on Facebook",
+    "instagram": "Qualia Typo on Instagram",
+    "linktree": "All our links on Linktree",
+    "email": "Email us"
   },
   "notFound": {
     "title": "Page not found",

@@ -45,6 +45,27 @@ All copy lives in two files, and nothing else needs touching:
 The two files must have the same keys. Strings currently marked `PLACEHOLDER` /
 `ΠΡΟΣΩΡΙΝΟ` are the ones still awaiting real copy.
 
+## The social links ⚠ placeholders
+
+The footer's four round buttons — Instagram, Facebook, Linktree and email —
+are listed in **`src/data/socials.ts`**. Three of them currently point at
+placeholder URLs and **lead nowhere**:
+
+| Button | Current URL | Needs |
+|---|---|---|
+| Instagram | `https://www.instagram.com/PLACEHOLDER/` | the group's real profile |
+| Facebook | `https://www.facebook.com/PLACEHOLDER` | the group's real page |
+| Linktree | `https://linktr.ee/PLACEHOLDER` | the group's real Linktree |
+| Email | `mailto:qualiatypowebsite@gmail.com` | ✅ already correct |
+
+Replace the three `PLACEHOLDER` URLs in `src/data/socials.ts` before the next
+deploy. Nothing else needs touching — the button, its colour and its label are
+already wired up. `src/App.test.tsx` asserts the URLs, so it will fail and
+remind you to update it there too.
+
+Adding a fifth network means adding an entry to `SOCIALS`, an icon to
+`ICONS` in `src/components/SocialLinks.tsx`, and a label to both i18n files.
+
 ## The logo
 
 `src/components/Logo.tsx` draws a placeholder mark. Replace its contents with

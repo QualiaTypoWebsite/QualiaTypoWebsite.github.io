@@ -1,12 +1,29 @@
 /*
-  The footer, and the row of volume-colour dots at its right.
+  The footer, and the social buttons at its right.
+
+  scroll-margin-top matches the other hash targets on the site, so arriving
+  from the top bar's "Contact" link does not tuck the buttons under the bar.
 */
 .footer {
   border-top: 1px solid var(--rule);
   padding: 2.5rem 0;
   font-size: 0.86rem;
   color: var(--ink-faint);
+  scroll-margin-top: var(--bar-h);
 }
-.inner { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center; }
-.dots { display: inline-flex; gap: 0.35rem; }
-.dot { width: 9px; height: 9px; border-radius: 999px; display: inline-block; }
+.inner { display: flex; justify-content: space-between; gap: 1.4rem; flex-wrap: wrap; align-items: center; }
+
+.social { display: flex; align-items: center; gap: 0.9rem; }
+
+.findUs {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* On a narrow screen the label sits above the buttons rather than squeezing
+   them onto a second line of their own. */
+@media (max-width: 520px) {
+  .social { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+}

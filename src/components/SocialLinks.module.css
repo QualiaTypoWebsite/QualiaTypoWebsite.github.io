@@ -1,0 +1,49 @@
+/*
+  The round social buttons.
+
+  Each button sets --social to one volume's cover colour. Those colours are
+  full-saturation and would be far too loud as four solid discs in a quiet
+  footer, so the fill is the colour mixed most of the way back into the paper
+  and only the glyph carries real chroma. Hover deepens both, which is enough
+  feedback without a colour change that startles.
+
+  The fill mixes into --paper-sunk rather than --paper on purpose. Two of the
+  four cover colours (the vol-3 green and especially the vol-4 yellow) are
+  lighter than the paper, so tinting the paper itself left those two buttons
+  with no visible edge at all — the sunk tone gives every button the same
+  faint disc to sit on, exactly as the .quiet button does.
+*/
+.list {
+  display: flex;
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--social) 22%, var(--paper-sunk));
+  color: color-mix(in srgb, var(--social) 38%, var(--ink));
+  border: 1px solid color-mix(in srgb, var(--social) 35%, var(--rule));
+  transition: transform 0.22s var(--ease-spring), background 0.22s var(--ease-out),
+    color 0.22s var(--ease-out), border-color 0.22s var(--ease-out);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--social) 40%, var(--paper-sunk));
+  color: color-mix(in srgb, var(--social) 26%, var(--ink));
+  border-color: color-mix(in srgb, var(--social) 60%, var(--rule));
+}
+
+.button:active { transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .button:hover { transform: none; }
+}

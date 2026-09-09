@@ -5,17 +5,17 @@
  *
  *  - The hero, which fills the first screen: the typewriter title and its two
  *    buttons on the left, the 2x2 grid of covers on the right.
- *  - Three scroll sections below it — About the project, About us, Contact —
- *    each with its own pastel wash and each revealed as you scroll to it.
+ *  - Two scroll sections below it — About the project and About us — each
+ *    with its own pastel wash and each revealed as you scroll to it.
  *
- * The section ids ("about", "group", "contact") are what the top bar's links
- * point at, so renaming one means updating TopBar.tsx too.
+ * The section ids ("about", "group") are what two of the top bar's links point
+ * at, so renaming one means updating TopBar.tsx too. The bar's third link,
+ * Contact, points at the footer, which is where the social buttons live.
  */
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from './Home.module.css';
 import { ButtonLink } from '../components/Button';
-import { ContactForm } from '../components/ContactForm';
 import { CoverGrid } from '../components/CoverGrid';
 import { SectionReveal } from '../components/SectionReveal';
 import { TypewriterTitle } from '../components/TypewriterTitle';
@@ -91,17 +91,6 @@ export function Home() {
           <div className={styles.prose}>
             {tList('group.body').map((p) => <p key={p}>{p}</p>)}
           </div>
-        </div>
-      </SectionReveal>
-
-      <SectionReveal id="contact" className={`${styles.section} ${styles.contact}`}>
-        <div className={`${styles.sectionInner} shell`}>
-          <div>
-            <p className="eyebrow">{t('contact.eyebrow')}</p>
-            <h2 className={styles.sectionTitle}>{t('contact.title')}</h2>
-            <p className={styles.prose} style={{ marginTop: '1rem' }}>{t('contact.intro')}</p>
-          </div>
-          <ContactForm />
         </div>
       </SectionReveal>
     </>

@@ -117,6 +117,7 @@ URL "/en/library"
 
 | File | What it does |
 |------|--------------|
+| `socials.ts` | Where the footer's social buttons point, and which volume colour each one wears. **The Facebook, Instagram and Linktree URLs are placeholders** — see README.md. |
 | `volumes.ts` | The accent colour and year for each volume, plus the functions that build image and PDF URLs. **Add volume 5 here** if there ever is one. |
 | `useVolumes.ts` | Fetches the generated `index.json` at runtime and merges it with the above. This is why publishing volume 4 needs no code change: the site asks at load time which volumes actually exist. |
 
@@ -161,11 +162,10 @@ of the way and it completes; release earlier and it springs back.
 | `TypewriterTitle.tsx` | The homepage title that types itself. |
 | `useTypewriter.ts` | The timing behind it: type each letter, hold with a blinking cursor, then drop the full stop. Each keystroke is slightly irregular on purpose — perfectly even typing reads as a machine. |
 | `CoverGrid.tsx` | The 2×2 grid of covers on the homepage, with the hover lift. Shows "coming soon" for volumes that do not exist yet. |
-| `ContactForm.tsx` | The contact form. |
-| `mailto.ts` | Validation and the `mailto:` link the form opens. Pure and tested. |
+| `SocialLinks.tsx` | The round Facebook / Instagram / Linktree / email buttons in the footer. The icons are hand-drawn inline SVG — four glyphs did not justify an icon package. |
 | `Button.tsx` | One button style in three variants, as a `<button>`, a `<Link>`, or an `<a>`. |
 | `SectionReveal.tsx` | Fades a section in the first time you scroll to it. |
-| `Footer.tsx` | The footer, with a dot in each volume's colour. |
+| `Footer.tsx` | The footer: the copyright line and the social buttons. Carries `id="contact"`, because that is what the top bar's Contact link points at. |
 | `Flags.tsx` | The Greek and UK flags, drawn as SVG so no image files are needed. |
 | `Logo.tsx` | **Placeholder** mark. Replace when there is a real logo. |
 | `usePrefersReducedMotion.ts` | Reports whether the visitor has asked for less animation. Every animation checks this. |
@@ -175,7 +175,7 @@ of the way and it completes; release earlier and it springs back.
 
 | File | What it does |
 |------|--------------|
-| `Home.tsx` | Hero (title, buttons, covers) plus the About, About‑us and Contact sections. |
+| `Home.tsx` | Hero (title, buttons, covers) plus the About and About‑us sections. |
 | `Library.tsx` | Every volume as a row, with Read and Download. |
 | `Reader.tsx` | The toolbar, the flipbook, and the thumbnail strip. Keeps the current page in the URL as `?page=12`. |
 | `NotFound.tsx` | The 404 page. |
@@ -216,7 +216,7 @@ backstop.
 
 ### Why some logic lives in its own file
 
-`pagination.ts`, `paths.ts` and `mailto.ts` contain no React at all. That is
+`pagination.ts` and `paths.ts` contain no React at all. That is
 deliberate: they hold the logic most likely to be subtly wrong, and keeping
 them separate means they can be tested directly, without rendering anything.
 The tests next to them (`*.test.ts`) double as documentation — reading

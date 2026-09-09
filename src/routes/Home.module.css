@@ -80,7 +80,6 @@
    ever competing with the covers. */
 .about { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--blush) 42%, var(--paper))); }
 .group { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--periwinkle) 45%, var(--paper))); }
-.contact { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--celadon) 45%, var(--paper))); }
 
 @media (max-width: 940px) {
   .hero { grid-template-columns: 1fr; min-height: 0; gap: 2.5rem; }

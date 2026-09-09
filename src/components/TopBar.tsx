@@ -1,8 +1,8 @@
 /**
  * The sticky header, present on every page.
  *
- * Contains the wordmark, links to the three homepage sections, a link to the
- * library, and the language flag.
+ * Contains the wordmark, three section links, a link to the library, and the
+ * language flag.
  *
  * The section links always point at the homepage plus a hash (e.g. "/#about"),
  * so they work from the library or the reader too, not just from the homepage.
@@ -18,7 +18,11 @@ import { GreekFlag, UkFlag } from './Flags';
 import { Logo } from './Logo';
 import { useLang } from '../i18n/LanguageProvider';
 
-/** Homepage sections are hash targets; the library is its own route. */
+/**
+ * Hash targets, not routes; the library is its own route. "about" and "group"
+ * are homepage sections, while "contact" is the footer — the site has no
+ * contact section, only the social buttons down there.
+ */
 const SECTIONS = ['about', 'group', 'contact'] as const;
 
 export function TopBar() {

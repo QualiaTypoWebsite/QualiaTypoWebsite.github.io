@@ -4,14 +4,13 @@
  *
  * This is the safety net for the things that would be most embarrassing to
  * break — the site failing to load, the wrong language appearing, a volume not
- * opening, the form accepting an empty message.
+ * opening, a social link pointing at the wrong place.
  *
  * Everything runs in jsdom, a fake browser. The fetch of index.json is stubbed
  * here (there is no server in a test), and the browser features jsdom is
  * missing are filled in by test-setup.ts.
  */
 import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
@@ -104,15 +103,27 @@ describe('the reader', () => {
   });
 });
 
-describe('the contact form', () => {
-  it('refuses to submit an empty form and says why', async () => {
-    const user = userEvent.setup();
+describe('the social buttons in the footer', () => {
+  it('link out to every network, with the email one as a mailto:', async () => {
     renderAt('/en');
-    await user.click(await screen.findByRole('button', { name: 'Send message' }));
 
-    expect(await screen.findByText('Please enter your name.')).toBeInTheDocument();
-    expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument();
-    expect(screen.getByText('Please write a message.')).toBeInTheDocument();
+    const links = {
+      'Qualia Typo on Instagram': 'https://www.instagram.com/PLACEHOLDER/',
+      'Qualia Typo on Facebook': 'https://www.facebook.com/PLACEHOLDER',
+      'All our links on Linktree': 'https://linktr.ee/PLACEHOLDER',
+      'Email us': 'mailto:qualiatypowebsite@gmail.com',
+    };
+
+    for (const [name, href] of Object.entries(links)) {
+      expect(await screen.findByRole('link', { name })).toHaveAttribute('href', href);
+    }
+  });
+
+  it('sends the outbound ones to a new tab, but not the mailto:', async () => {
+    renderAt('/en');
+    expect(await screen.findByRole('link', { name: 'Qualia Typo on Instagram' }))
+      .toHaveAttribute('target', '_blank');
+    expect(screen.getByRole('link', { name: 'Email us' })).not.toHaveAttribute('target');
   });
 });
 

@@ -1,24 +1,30 @@
 /**
- * The site footer: a copyright line, and one dot per volume in that volume's
- * own cover colour — a small nod to the magazine's palette.
+ * The site footer: a copyright line, and the group's social buttons.
+ *
+ * It carries id="contact", because the top bar's "Contact" link points here.
+ * The site has no contact form and no contact section — reaching us means one
+ * of these four links — so the footer is the target, the way it is on most
+ * sites.
+ *
+ * The buttons wear the volume cover colours, which is where the row of volume
+ * dots that used to sit here has gone.
  */
 import styles from './Footer.module.css';
-import { VOLUME_META } from '../data/volumes';
+import { SocialLinks } from './SocialLinks';
 import { useLang } from '../i18n/LanguageProvider';
 
 export function Footer() {
   const { t } = useLang();
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} id="contact">
       <div className={`${styles.inner} shell`}>
         <span>
           © {new Date().getFullYear()} {t('footer.rights')} · {t('footer.madeWith')}
         </span>
-        <span className={styles.dots} aria-hidden="true">
-          {VOLUME_META.map((v) => (
-            <span key={v.volume} className={styles.dot} style={{ background: v.accent }} />
-          ))}
-        </span>
+        <div className={styles.social}>
+          <span className={styles.findUs}>{t('social.findUs')}</span>
+          <SocialLinks />
+        </div>
       </div>
     </footer>
   );
