@@ -2,6 +2,10 @@ local-notes/*
 node_modules/
 dist/
 
+# Do not upload actual voiceover recordings
+# they should be accessible via a cloudflare link
+assets/voiceovers/*
+
 # Page images are generated from the PDFs by `npm run pages`; CI rebuilds them
 # on deploy, so they are never committed.
 public/magazines/
