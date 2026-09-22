@@ -65,8 +65,10 @@ Without it the site runs but every magazine page is a broken image.
   `--font-title` token. Body and display type stay on the Google-hosted Inter
   and DM Mono. Those font files are committed, unlike the page images.
 - **The voiceover recordings live in a public Cloudflare R2 bucket**, not in
-  this repo — they are far too large to commit, which is why
-  `assets/voiceovers/` holds only a `file-order.txt` per volume. The URLs are
+  this repo — they are far too large to commit, so `.gitignore` excludes
+  `assets/voiceovers/` apart from one small `file-order.txt` per volume, which
+  **is** committed: `recordings.test.ts` reads those files, so CI fails without
+  them. Don't re-ignore them. The URLs are
   built in `src/data/recordings.ts` as `RECORDINGS_BASE/qt<volume>/<filename>`.
   That file is plain, hand-editable data: renaming a recording on the site is
   an `alias` edit, repointing one is a `file` edit, and moving the whole lot is
