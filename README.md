@@ -52,10 +52,12 @@ spread — and the site presents them at **`/audio`** (`/en/audio`), reached fro
 the button under "Every volume" on the library page. Volume 3 has not been
 recorded; it still gets a section, which says so when opened.
 
-**The recordings are not in this repo.** They are far too large to commit, so
-they live in a public Cloudflare R2 bucket and `assets/voiceovers/` holds only
-a `file-order.txt` per volume — the record of what was recorded and in what
-order. URLs are built like this:
+**The recordings themselves are not in this repo.** They are far too large to
+commit, so they live in a public Cloudflare R2 bucket. What *is* committed is
+one small `file-order.txt` per volume under `assets/voiceovers/` — the record
+of what was recorded and in what order. `.gitignore` excludes everything else
+in that folder, and the tests read those text files, so they need to stay
+tracked. URLs are built like this:
 
 ```
 https://pub-….r2.dev / qt<volume> / <filename>

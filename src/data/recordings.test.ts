@@ -7,8 +7,12 @@
  * them in step automatically, so this test reads both and compares them. If a
  * recording is added, removed or reordered in one and not the other, these
  * fail and say which volume.
+ *
+ * This is why those .txt files are committed even though the rest of
+ * assets/voiceovers/ is gitignored: without them in the repo, CI has nothing
+ * to compare against and this file cannot run. See the note in .gitignore.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { RECORDINGS, recordingsFor, recordingUrl, RECORDINGS_BASE } from './recordings';
@@ -23,6 +27,16 @@ const RECORDED = [1, 2, 4];
  */
 function filesInOrder(volume: number): string[] {
   const file = path.resolve(`assets/voiceovers/vol-${volume}/file-order.txt`);
+
+  // A clearer failure than a raw ENOENT, because the likely cause is a
+  // .gitignore change rather than a missing volume.
+  if (!existsSync(file)) {
+    throw new Error(
+      `${file} is missing. These files must stay in the repo for this test to ` +
+        'run — check the exception for them in .gitignore.',
+    );
+  }
+
   return readFileSync(file, 'utf8')
     .split('\n')
     .map((line) => line.trim())
