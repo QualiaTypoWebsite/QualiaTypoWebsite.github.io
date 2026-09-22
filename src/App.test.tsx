@@ -10,7 +10,8 @@
  * here (there is no server in a test), and the browser features jsdom is
  * missing are filled in by test-setup.ts.
  */
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
@@ -124,6 +125,154 @@ describe('the social buttons in the footer', () => {
     expect(await screen.findByRole('link', { name: 'Qualia Typo on Instagram' }))
       .toHaveAttribute('target', '_blank');
     expect(screen.getByRole('link', { name: 'Email us' })).not.toHaveAttribute('target');
+  });
+});
+
+describe('the audio library', () => {
+  const BUCKET = 'https://pub-e61841570dd448b7948dfe96745e70f5.r2.dev';
+
+  /** Opens one volume's section and hands back what is inside it. */
+  async function openVolume(n: number) {
+    const user = userEvent.setup();
+    const summary = await screen.findByRole('button', { name: new RegExp(`Qualia Typo #${n}`) });
+    await user.click(summary);
+    expect(summary).toHaveAttribute('aria-expanded', 'true');
+    return user;
+  }
+
+  it('is reachable from the library page', async () => {
+    renderAt('/en/library');
+    expect(await screen.findByRole('link', { name: 'Audio library' }))
+      .toHaveAttribute('href', '/en/audio');
+  });
+
+  it('gives every volume a section, recorded or not', async () => {
+    renderAt('/en/audio');
+    expect(await screen.findByRole('heading', { name: 'Listen to the magazine' }))
+      .toBeInTheDocument();
+    for (const n of [1, 2, 3, 4]) {
+      expect(screen.getByRole('button', { name: new RegExp(`Qualia Typo #${n}`) }))
+        .toBeInTheDocument();
+    }
+  });
+
+  it('starts with every section closed', async () => {
+    renderAt('/en/audio');
+    const summary = await screen.findByRole('button', { name: /Qualia Typo #1/ });
+    expect(summary).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('button', { name: 'Play vol1-part1' })).not.toBeInTheDocument();
+  });
+
+  it('says so when a volume has nothing recorded', async () => {
+    renderAt('/en/audio');
+    await openVolume(3);
+    expect(await screen.findByText('No recordings yet for this volume.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Play from the start' })).not.toBeInTheDocument();
+  });
+
+  it('lists a volume\'s recordings under their aliases, in order', async () => {
+    renderAt('/en/audio');
+    await openVolume(2);
+    const tracks = await screen.findAllByRole('listitem');
+    // A track reads "07vol2-part7"; the volume's own <li> wraps them all, so
+    // matching from the start of the text is what keeps it out of the count.
+    const names = tracks
+      .map((li) => li.textContent ?? '')
+      .filter((text) => /^\d{2}vol2-part\d+$/.test(text));
+    expect(names).toHaveLength(25);
+    expect(names[0]).toContain('vol2-part1');
+    expect(names[24]).toContain('vol2-part25');
+  });
+
+  it('plays a recording from the bucket and shows it in the player', async () => {
+    renderAt('/en/audio');
+    const user = await openVolume(1);
+
+    expect(screen.queryByRole('complementary', { name: 'Audio player' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Play vol1-part1' }));
+
+    const player = await screen.findByRole('complementary', { name: 'Audio player' });
+    expect(within(player).getByText('vol1-part1')).toBeInTheDocument();
+    expect(screen.getByTestId('audio-element'))
+      .toHaveAttribute('src', `${BUCKET}/qt1/qt1p4.mp3`);
+  });
+
+  // The four awkward filenames are the reason the URL is encoded at all.
+  it('encodes a filename with a space in it', async () => {
+    renderAt('/en/audio');
+    const user = await openVolume(1);
+    await user.click(screen.getByRole('button', { name: 'Play vol1-part3' }));
+    expect(screen.getByTestId('audio-element'))
+      .toHaveAttribute('src', `${BUCKET}/qt1/qt1p8%20periehomena.mp3`);
+  });
+
+  it('starts a volume at its first recording', async () => {
+    renderAt('/en/audio');
+    const user = await openVolume(4);
+    await user.click(screen.getByRole('button', { name: 'Play from the start' }));
+
+    const player = await screen.findByRole('complementary', { name: 'Audio player' });
+    expect(within(player).getByText('vol4-part1')).toBeInTheDocument();
+    expect(screen.getByTestId('audio-element'))
+      .toHaveAttribute('src', `${BUCKET}/qt4/qt4tokitrino.mp3`);
+  });
+
+  it('steps between recordings, and stops at the ends of the volume', async () => {
+    renderAt('/en/audio');
+    const user = await openVolume(1);
+    await user.click(screen.getByRole('button', { name: 'Play vol1-part1' }));
+
+    const player = await screen.findByRole('complementary', { name: 'Audio player' });
+    expect(within(player).getByRole('button', { name: 'Previous recording' })).toBeDisabled();
+
+    await user.click(within(player).getByRole('button', { name: 'Next recording' }));
+    expect(within(player).getByText('vol1-part2')).toBeInTheDocument();
+
+    await user.click(within(player).getByRole('button', { name: 'Previous recording' }));
+    expect(within(player).getByText('vol1-part1')).toBeInTheDocument();
+  });
+
+  it('pauses and resumes the recording it is on', async () => {
+    renderAt('/en/audio');
+    const user = await openVolume(2);
+    await user.click(screen.getByRole('button', { name: 'Play vol2-part1' }));
+
+    const player = await screen.findByRole('complementary', { name: 'Audio player' });
+    await user.click(within(player).getByRole('button', { name: 'Pause' }));
+    expect(within(player).getByRole('button', { name: 'Play' })).toBeInTheDocument();
+  });
+
+  it('keeps playing when the visitor moves to another page', async () => {
+    renderAt('/en/audio');
+    const user = await openVolume(1);
+    await user.click(screen.getByRole('button', { name: 'Play vol1-part1' }));
+    await screen.findByRole('complementary', { name: 'Audio player' });
+
+    await user.click(screen.getByRole('link', { name: 'Back to the library' }));
+    expect(await screen.findByRole('heading', { name: 'Every volume' })).toBeInTheDocument();
+
+    const player = screen.getByRole('complementary', { name: 'Audio player' });
+    expect(within(player).getByText('vol1-part1')).toBeInTheDocument();
+    expect(screen.getByTestId('audio-element'))
+      .toHaveAttribute('src', `${BUCKET}/qt1/qt1p4.mp3`);
+  });
+
+  it('dismisses the player when it is closed', async () => {
+    renderAt('/en/audio');
+    const user = await openVolume(1);
+    await user.click(screen.getByRole('button', { name: 'Play vol1-part1' }));
+
+    const player = await screen.findByRole('complementary', { name: 'Audio player' });
+    await user.click(within(player).getByRole('button', { name: 'Close the player' }));
+    // The card animates out, so it lingers for a frame after the click.
+    await waitForElementToBeRemoved(() =>
+      screen.queryByRole('complementary', { name: 'Audio player' }),
+    );
+  });
+
+  it('renders the page in Greek at the root', async () => {
+    renderAt('/audio');
+    expect(await screen.findByRole('heading', { name: 'Ακούστε το περιοδικό' })).toBeInTheDocument();
   });
 });
 

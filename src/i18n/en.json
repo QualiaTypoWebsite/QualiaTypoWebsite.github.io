@@ -47,7 +47,33 @@
     "pages": "{{count}} pages",
     "comingSoon": "Coming soon",
     "comingSoonNote": "Volume 4 is in the works.",
-    "volumeLabel": "Volume {{n}}"
+    "volumeLabel": "Volume {{n}}",
+    "audioLibrary": "Audio library"
+  },
+  "audio": {
+    "eyebrow": "Audio library",
+    "title": "Listen to the magazine",
+    "subtitle": "The recordings for each volume, in the order they are read.",
+    "backToLibrary": "Back to the library",
+    "playFromStart": "Play from the start",
+    "trackCount": "{{count}} recordings",
+    "none": "No recordings",
+    "noRecordings": "No recordings yet for this volume.",
+    "playTrack": "Play {{name}}",
+    "pauseTrack": "Pause {{name}}",
+    "player": {
+      "region": "Audio player",
+      "nowPlaying": "Now playing",
+      "play": "Play",
+      "pause": "Pause",
+      "previous": "Previous recording",
+      "next": "Next recording",
+      "back5": "Back 5 seconds",
+      "forward5": "Forward 5 seconds",
+      "progress": "Playback position",
+      "elapsed": "{{current}} of {{total}}",
+      "close": "Close the player"
+    }
   },
   "reader": {
     "back": "Back to the library",

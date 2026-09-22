@@ -1,0 +1,146 @@
+/*
+  The audio library.
+
+  Deliberately the same visual language as Library.module.css — one tinted row
+  per volume, each mixing its own --accent into the paper — so the two pages
+  read as the same shelf seen two ways.
+
+  The extra bottom padding is for the player: it is fixed to the bottom-left
+  corner, and without the room it would sit on top of the last volume.
+*/
+.page { padding: clamp(2.5rem, 7vh, 5rem) 0 clamp(9rem, 22vh, 13rem); }
+
+.head { margin-bottom: clamp(2rem, 5vh, 3.5rem); }
+.title { font-size: clamp(2rem, 5vw, 3.2rem); }
+.subtitle { color: var(--ink-soft); margin-top: 0.6rem; }
+
+.list { display: grid; gap: clamp(0.8rem, 2vh, 1.2rem); list-style: none; padding: 0; margin: 0; }
+
+.section {
+  border-radius: 14px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--accent) 6%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--rule));
+  transition: background 0.3s var(--ease-out);
+}
+.section:hover { background: color-mix(in srgb, var(--accent) 9%, var(--paper)); }
+
+/* The heading exists for the document outline; the button inside it is the control. */
+.summaryHeading { margin: 0; font-size: inherit; font-weight: inherit; letter-spacing: normal; }
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 2vw, 1.4rem);
+  width: 100%;
+  padding: clamp(1rem, 2.2vw, 1.4rem) clamp(1.1rem, 2.5vw, 1.8rem);
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.summaryText { flex: 1; min-width: 0; }
+
+.volNumber {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  filter: saturate(0.85) brightness(0.82);
+}
+
+.volTitle {
+  display: block;
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 0.2rem;
+}
+
+.count {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.chevron { flex: none; color: var(--ink-soft); transition: transform 0.3s var(--ease-out); }
+.summary[aria-expanded='true'] .chevron { transform: rotate(180deg); }
+
+.panel { overflow: hidden; }
+.panelInner {
+  padding: 0 clamp(1.1rem, 2.5vw, 1.8rem) clamp(1.1rem, 2.5vw, 1.6rem);
+  border-top: 1px solid color-mix(in srgb, var(--accent) 16%, var(--rule));
+  padding-top: clamp(1rem, 2vw, 1.3rem);
+}
+
+.empty { color: var(--ink-soft); margin: 0; }
+
+.tracks {
+  list-style: none;
+  margin: clamp(1rem, 2vw, 1.3rem) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.3rem 0.5rem 0.3rem 0.3rem;
+  border-radius: 10px;
+  transition: background 0.2s var(--ease-out);
+}
+.track:hover { background: color-mix(in srgb, var(--accent) 12%, var(--paper)); }
+
+/* The recording the player is on, whether it is playing or paused. */
+.trackCurrent { background: color-mix(in srgb, var(--accent) 16%, var(--paper)); }
+
+.trackButton {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out),
+    transform 0.2s var(--ease-spring), border-color 0.2s var(--ease-out);
+}
+.trackButton:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px); }
+.trackButton svg { width: 16px; height: 16px; }
+.trackCurrent .trackButton { background: var(--ink); color: var(--paper); }
+
+.trackIndex {
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.trackName {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wave { flex: none; color: var(--accent); display: grid; place-items: center; }
+.wave svg { width: 18px; height: 18px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .trackButton:hover { transform: none; }
+}
+
+@media (max-width: 560px) {
+  .count { display: none; }
+}

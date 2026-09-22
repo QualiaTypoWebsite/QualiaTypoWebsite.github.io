@@ -1,0 +1,174 @@
+/*
+  The player card.
+
+  Fixed to the bottom-left corner, above everything, and tinted with the
+  playing volume's cover colour through --accent — set on the element by
+  AudioPlayer.tsx, so the same CSS serves all four volumes.
+
+  The backdrop blur is a progressive nicety: browsers without it simply get the
+  solid paper background underneath, which is already opaque enough to read on.
+*/
+.player {
+  position: fixed;
+  left: clamp(0.75rem, 2.5vw, 1.5rem);
+  bottom: clamp(0.75rem, 2.5vw, 1.5rem);
+  z-index: 60;
+  width: min(330px, calc(100vw - 1.5rem));
+  padding: 0.85rem 1rem 1rem;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--rule));
+  box-shadow: 0 18px 40px -22px rgba(26, 22, 18, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  filter: saturate(0.85) brightness(0.82);
+  margin: 0;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  margin-right: -0.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: color 0.2s var(--ease-out), background 0.2s var(--ease-out);
+}
+.close:hover { color: var(--ink); background: var(--paper-sunk); }
+.close svg { width: 16px; height: 16px; }
+
+.title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  margin: 0.15rem 0 0.6rem;
+  /* Aliases are one long token; a narrow card must not let it spill out. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scrub { display: flex; align-items: center; gap: 0.55rem; }
+
+.time {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  /* Fixed width so the controls below do not shuffle as the seconds tick. */
+  min-width: 2.6rem;
+}
+.time:last-child { text-align: right; }
+
+/*
+  The seek bar. Appearance is reset and rebuilt because the native control
+  cannot be tinted, and the filled part to the left of the thumb is drawn as a
+  gradient stop at --progress, which AudioPlayer.tsx updates as the file plays.
+*/
+.range {
+  flex: 1;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 16px;
+  background: transparent;
+  cursor: pointer;
+  margin: 0;
+}
+.range:disabled { cursor: default; opacity: 0.55; }
+
+.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0 var(--progress, 0%),
+    var(--rule) var(--progress, 0%) 100%
+  );
+}
+.range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0 var(--progress, 0%),
+    var(--rule) var(--progress, 0%) 100%
+  );
+}
+
+.range::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  box-shadow: 0 1px 4px rgba(26, 22, 18, 0.35);
+  transition: transform 0.18s var(--ease-spring);
+}
+.range::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  box-shadow: 0 1px 4px rgba(26, 22, 18, 0.35);
+}
+.range:hover::-webkit-slider-thumb { transform: scale(1.25); }
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.control {
+  display: grid;
+  place-items: center;
+  width: 38px; height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out),
+    transform 0.2s var(--ease-spring);
+}
+.control:hover:not(:disabled) { background: var(--paper-sunk); transform: translateY(-1px); }
+.control:active:not(:disabled) { transform: translateY(0); }
+.control:disabled { color: var(--ink-faint); opacity: 0.45; cursor: default; }
+
+/* The play button is the one control you aim for without looking. */
+.big {
+  width: 46px; height: 46px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.big:hover:not(:disabled) { background: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .control:hover:not(:disabled) { transform: none; }
+  .range:hover::-webkit-slider-thumb { transform: none; }
+}
+
+/* On a phone the card spans the width rather than floating in one corner. */
+@media (max-width: 520px) {
+  .player {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    width: auto;
+  }
+}
