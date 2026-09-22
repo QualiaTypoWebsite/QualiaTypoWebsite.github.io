@@ -30,6 +30,11 @@ The important idea: **the PDFs are the only real source.** Everything under
 is why it is in `.gitignore` — it would otherwise double the repo's size for no
 benefit.
 
+One thing does not come from this repo at all: the **voiceover recordings**.
+They are too large to commit and too large to build, so they are hosted in a
+public Cloudflare R2 bucket and fetched by the browser at the moment someone
+presses play. See `src/audio/` in Part 3.
+
 ### Why page images instead of showing the PDF directly?
 
 Volume 1's PDF is 19 MB. If the reader loaded the PDF, you would stare at a
@@ -53,6 +58,10 @@ Follow these seven files in this order and the whole project will make sense.
 | 6 | `src/routes/Home.tsx` | A page assembled from components — the typical shape of a route. |
 | 7 | `src/flipbook/pagination.ts` then `Flipbook.tsx` | The hardest part, saved for last. Read the maths before the component. |
 
+The audio library is a self-contained addition and can be read separately, in
+the same order: `src/data/recordings.ts`, then `src/audio/queue.ts`, then
+`AudioPlayerProvider.tsx`, then the page in `src/routes/AudioLibrary.tsx`.
+
 ---
 
 ## Part 3 — Every file, by folder
@@ -71,6 +80,7 @@ Follow these seven files in this order and the whole project will make sense.
 
 | File | What it does |
 |------|--------------|
+| `check-recordings.mjs` | Asks the bucket whether every voiceover recording the site links to is really there. Run by hand with `npm run check:audio`; nothing in the build depends on it. |
 | `build-pages.mjs` | Turns each PDF into web images. Uses `pdftoppm` to render pages, then ImageMagick to make a 1400 px reading image and a 240 px thumbnail each. Writes `meta.json` per volume and an `index.json` listing every volume that exists. Also copies the PDF itself so the Download button has something to point at. |
 
 ### `public/fonts/` — the one self-hosted typeface
@@ -87,7 +97,7 @@ Unlike `public/magazines/`, these **are** committed — nothing regenerates them
 | File | What it does |
 |------|--------------|
 | `main.tsx` | Starts React and mounts the app. Also handles one small thing: if you previously chose English, arriving at the bare root sends you to `/en`. |
-| `App.tsx` | The route table and the page shell (top bar, main area, footer). The route list is defined once and mounted **twice** — once at `/` for Greek, once at `/en` for English. |
+| `App.tsx` | The route table and the page shell (top bar, main area, footer, audio player). The route list is defined once and mounted **twice** — once at `/` for Greek, once at `/en` for English. The audio player is mounted above the routes, so playback survives navigation. |
 | `vite-env.d.ts` | One line that tells TypeScript what a `.module.css` import is. |
 | `test-setup.ts` | Fills in browser features jsdom lacks, so tests can run. |
 | `App.test.tsx` | Renders real pages and checks they work — the safety net for the whole app. |
@@ -118,6 +128,7 @@ URL "/en/library"
 | File | What it does |
 |------|--------------|
 | `socials.ts` | Where the footer's social buttons point, and which volume colour each one wears. **The Facebook, Instagram and Linktree URLs are placeholders** — see README.md. |
+| `recordings.ts` | **Every voiceover recording**: which file belongs to which volume, in what order, and under what name on the site. Also where the recordings are hosted. This is the file to edit to rename or repoint one. |
 | `volumes.ts` | The accent colour and year for each volume, plus the functions that build image and PDF URLs. **Add volume 5 here** if there ever is one. |
 | `useVolumes.ts` | Fetches the generated `index.json` at runtime and merges it with the above. This is why publishing volume 4 needs no code change: the site asks at load time which volumes actually exist. |
 
@@ -171,12 +182,43 @@ of the way and it completes; release earlier and it springs back.
 | `usePrefersReducedMotion.ts` | Reports whether the visitor has asked for less animation. Every animation checks this. |
 | `useMediaQuery.ts` | Reports whether a CSS media query currently matches. Used to switch the flipbook to single-page on narrow screens. |
 
+### `src/audio/` — the voiceovers
+
+| File | What it does |
+|------|--------------|
+| `queue.ts` | Pure maths, no React: the next and previous recording, a clamped skip, and a duration formatted for a person to read. Tested directly, like `pagination.ts`. |
+| `AudioPlayerProvider.tsx` | Owns the one `<audio>` element and everything about what is playing. Mounted **above the route table** in `App.tsx`. |
+| `AudioPlayer.tsx` | The player card in the bottom-left corner. Renders nothing until something is played. |
+| `PlayerIcons.tsx` | The transport glyphs, hand-drawn inline SVG — no icon package, for the same reason as `SocialLinks.tsx`. |
+| `AudioPlayer.module.css` | The card, including the rebuilt seek bar (the native one cannot be tinted). |
+
+**Where the recordings live.** Unlike the magazines, the audio is not in this
+repo and is not generated by the build. The MP3s sit in a public Cloudflare R2
+bucket, and `recordings.ts` holds the list of filenames plus the base URL:
+
+```
+  RECORDINGS_BASE / qt<volume> / <filename>
+```
+
+`assets/voiceovers/vol-N/file-order.txt` is the record of what was recorded and
+in what order. It is the source `recordings.ts` was built from, and
+`recordings.test.ts` reads it back and checks the two still agree, so neither
+can drift without a test failing.
+
+**Why the provider sits above the routes.** A provider inside the audio page
+would be unmounted the moment the visitor navigated, taking its `<audio>`
+element and the sound with it. Up in `App.tsx` it survives every navigation, so
+a recording keeps playing while the visitor browses the library or reads the
+magazine. The queue is one volume: finishing the last recording stops rather
+than rolling on into a different volume.
+
 ### `src/routes/` — the pages
 
 | File | What it does |
 |------|--------------|
 | `Home.tsx` | Hero (title, buttons, covers) plus the About and About‑us sections. |
-| `Library.tsx` | Every volume as a row, with Read and Download. |
+| `Library.tsx` | Every volume as a row, with Read and Download. Also the way in to the audio library. |
+| `AudioLibrary.tsx` | The recordings, one collapsible section per volume. Volume 3 gets a section too, saying there is nothing yet. |
 | `Reader.tsx` | The toolbar, the flipbook, and the thumbnail strip. Keeps the current page in the URL as `?page=12`. |
 | `NotFound.tsx` | The 404 page. |
 
@@ -230,6 +272,23 @@ The tests next to them (`*.test.ts`) double as documentation — reading
 That is all. `useVolumes` will find it and the "coming soon" tile becomes a
 real cover.
 
+### Adding or changing a recording
+
+1. Upload the file to the bucket, under `qt<volume>/`.
+2. Add a line to that volume's list in `src/data/recordings.ts`.
+3. `npm run check:audio` to confirm the link resolves.
+
+To rename one on the site, change its `alias` — that is the only field a
+visitor ever sees. To repoint one, change its `file`. Volume 3 is an empty list
+waiting to be filled in the same way.
+
+Note that `recordings.test.ts` compares the list against
+`assets/voiceovers/vol-N/file-order.txt`, so adding a recording means adding it
+to both — which is the point: the text file stays a truthful record of what was
+recorded.
+
 ### Changing text
 
-`src/i18n/el.json` and `src/i18n/en.json`. Nothing else.
+`src/i18n/el.json` and `src/i18n/en.json`. Nothing else. The recordings'
+aliases are the one exception: they contain no language, so they live in
+`src/data/recordings.ts` instead.

@@ -10,6 +10,7 @@
 .head { margin-bottom: clamp(2rem, 5vh, 3.5rem); }
 .title { font-size: clamp(2rem, 5vw, 3.2rem); }
 .subtitle { color: var(--ink-soft); margin-top: 0.6rem; }
+.headActions { margin-top: 1.4rem; }
 
 .list { display: grid; gap: clamp(1.2rem, 3vh, 2rem); list-style: none; padding: 0; margin: 0; }
 

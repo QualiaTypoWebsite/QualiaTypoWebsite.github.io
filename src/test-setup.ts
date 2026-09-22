@@ -55,3 +55,49 @@ if (!('IntersectionObserver' in window)) {
 // jsdom logs "Not implemented" for scrolling; the app legitimately calls it.
 window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
 Element.prototype.scrollIntoView = vi.fn();
+
+/**
+ * jsdom has an <audio> element but no media engine behind it: play() and
+ * pause() throw "Not implemented", and currentTime is read-only.
+ *
+ * These stubs give it just enough of one. play() and pause() fire the real
+ * events and move `paused`, which is what the player reads when deciding
+ * whether a click means play or pause — so a test can press the button and
+ * then assert on what the button says, rather than on some test-only flag.
+ * currentTime becomes a plain number so seeking can be checked.
+ */
+type FakeMedia = HTMLMediaElement & { _paused?: boolean; _time?: number };
+Object.defineProperties(window.HTMLMediaElement.prototype, {
+  play: {
+    configurable: true,
+    value(this: FakeMedia) {
+      this._paused = false;
+      this.dispatchEvent(new Event('play'));
+      return Promise.resolve();
+    },
+  },
+  pause: {
+    configurable: true,
+    value(this: FakeMedia) {
+      this._paused = true;
+      this.dispatchEvent(new Event('pause'));
+    },
+  },
+  paused: {
+    configurable: true,
+    get(this: FakeMedia) {
+      return this._paused ?? true;
+    },
+  },
+  load: { configurable: true, value: () => undefined },
+  currentTime: {
+    configurable: true,
+    get(this: FakeMedia) {
+      return this._time ?? 0;
+    },
+    set(this: FakeMedia, value: number) {
+      this._time = value;
+      this.dispatchEvent(new Event('timeupdate'));
+    },
+  },
+});

@@ -29,6 +29,12 @@ export function Library() {
         <p className="eyebrow">{t('library.eyebrow')}</p>
         <h1 className={styles.title}>{t('library.title')}</h1>
         <p className={styles.subtitle}>{t('library.subtitle')}</p>
+        {/* The recordings are their own page; this is the only way in. */}
+        <div className={styles.headActions}>
+          <ButtonLink to={to('/audio')} variant="secondary">
+            {t('library.audioLibrary')}
+          </ButtonLink>
+        </div>
       </header>
 
       {error && <p className={styles.error}>{t('reader.notFound')}</p>}
