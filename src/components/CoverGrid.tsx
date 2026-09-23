@@ -62,8 +62,16 @@ export function CoverGrid({ volumes, loading }: Props) {
             ) : loading ? (
               <div className={styles.skeleton} aria-hidden="true" />
             ) : (
-              <div className={styles.soon} aria-label={`${label} — ${t('library.comingSoon')}`}>
-                {t('library.comingSoon')}
+              /* aria-label used to sit on this div and was ignored, because a
+                 div has no role for a label to name — so the tile announced
+                 only "coming soon", with no clue which volume it meant. The
+                 volume number is now real text, hidden from view because the
+                 tile is already in the fourth position of a numbered grid. */
+              <div className={styles.soon}>
+                <span className="sr-only">
+                  {t('a11y.comingSoonTile', { n: meta.volume })}
+                </span>
+                <span aria-hidden="true">{t('library.comingSoon')}</span>
               </div>
             )}
           </motion.li>

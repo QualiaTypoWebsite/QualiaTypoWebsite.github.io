@@ -55,8 +55,33 @@
   --paper-sunk: #f3eee7;
   --ink: #1a1a1a;
   --ink-soft: #5b5651;
-  --ink-faint: #9a938b;
+  /* Every colour below was measured against the five surfaces this site
+     actually paints — paper, sunk paper, the blush and periwinkle section
+     washes, and the reader's accent glow at volume 4's yellow, which is the
+     lightest background anywhere here. A colour that clears 4.5:1 on paper but
+     fails on a wash is not fixed, so the worst of the five is the one quoted.
+
+     --ink-faint was #9a938b, which measured 2.87:1 and so failed WCAG 1.4.3
+     everywhere it was used — and it was used for the whole footer, every
+     section eyebrow, the hero tagline, the scroll hint and the reader hint.
+     Darkening the one token fixed all of them at once. */
+  --ink-faint: #6e675f; /* 4.74:1 worst case — WCAG 1.4.3 AA */
   --rule: #e2dbd1;
+  /* The boundary of anything you can operate: toolbar buttons, the language
+     pill, the menu toggle, quiet buttons. WCAG 1.4.11 wants 3:1 for those, and
+     --rule only manages 1.30:1. --rule itself is kept for decorative
+     separators — the footer's top line, the section dividers — where no
+     information is carried by the line and the site would only lose its
+     lightness for nothing. */
+  --rule-strong: #8a8279; /* 3.22:1 worst case — WCAG 1.4.11 AA */
+
+  /* The focus ring. It used to be var(--accent), which meant that on a volume
+     4 page it was drawn in #f5e849 at 1.20:1 — a focus indicator you could not
+     see. Ink works on every background the site has, because outline-offset
+     draws the ring *outside* the element, on the paper-toned surface behind it,
+     never on the element's own colour. Kept as a token so the high-contrast
+     mode in src/a11y/ can flip it in one line. */
+  --focus-ring: #1a1a1a; /* 14.79:1 worst case */
 
   --blush: #f7d9e9;
   --periwinkle: #d9def0;
@@ -70,6 +95,21 @@
 
   /* Set per-volume on the reader and library rows. Defaults to vol 1. */
   --accent: var(--vol-1);
+
+  /* The same volume colour, but safe to write *with*.
+     --accent is a cover colour at full saturation, and two of the four are
+     light: volume 3's green measures 2.00:1 on paper and volume 4's yellow
+     1.20:1. Used raw as a text or state colour — which it was, for the
+     "ΤΟΜΟΣ 4" labels, the active toolbar toggle and the current thumbnail —
+     it simply disappears on those two volumes.
+
+     Mixing 40% of the colour into ink is the largest share that still clears
+     4.5:1 on every surface it is drawn on, for all four volumes: each keeps as
+     much of its own hue as legibility allows, and a future volume 5 is handled
+     without anyone having to think about it. Backgrounds and borders go on
+     using --accent; anything a reader has to make out uses this.
+
+     It is declared on * below rather than here — see the note there. */
 
   --font-display: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -87,14 +127,36 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+/*
+  --accent-ink has to be declared here, on every element, and not once on
+  :root — which is the obvious place and the wrong one.
+
+  A var() inside a custom property is substituted at computed-value time on the
+  element that *declares* it. Declared on :root, --accent-ink would resolve
+  against :root's --accent (volume 1's pink) and descendants would inherit that
+  already-finished colour. A library row setting --accent to volume 4's yellow
+  would still get a pink --accent-ink, and nothing would look wrong enough to
+  notice until someone measured it.
+
+  Declared on *, every element recomputes it from the --accent it has actually
+  inherited, which is what makes one rule serve all four volumes.
+*/
+* { --accent-ink: color-mix(in srgb, var(--accent) 40%, var(--ink)); }
+
+/* font-size: 100% keeps the root on whatever default size the visitor has set
+   in their browser, so every rem on the site scales with it. The body size
+   below is then expressed in rem rather than the 17px it used to be: px would
+   have pinned the body copy at 17px no matter how large a visitor had asked
+   their text to be. It is also what lets the accessibility panel's font zoom
+   work at all — see src/a11y/settings.ts. */
+html { font-size: 100%; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 1.0625rem; /* 17px at a default root, but scales with it */
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -108,10 +170,28 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; 
 
 button { font: inherit; color: inherit; }
 
+/*
+  The focus ring.
+
+  outline-offset puts the ring outside the element, on the surface behind it,
+  which is always paper-toned here — so one ink-coloured ring is legible on the
+  paper, on a pastel wash, on a magazine page and on top of the dark primary
+  button alike. 3px of solid perimeter at this contrast also satisfies the
+  stricter 2.4.13 Focus Appearance, which AA does not require but which costs
+  nothing to meet.
+
+  The old rule also set border-radius: 3px, which applied to the focused
+  element itself and squared off the round social buttons the instant they took
+  keyboard focus. Browsers follow the element's own border-radius when drawing
+  an outline, so nothing needs to replace it.
+
+  scroll-margin-top keeps the sticky top bar from covering whatever has just
+  been focused when tabbing down a long page — WCAG 2.4.11 Focus Not Obscured.
+*/
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 3px;
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+  scroll-margin-top: calc(var(--bar-h) + 0.75rem);
 }
 
 /* Visible only to screen readers, and to keyboard users when focused. */
@@ -157,4 +237,32 @@ button { font: inherit; color: inherit; }
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/*
+  Windows High Contrast Mode (and any other forced-colors setting).
+
+  The operating system replaces every colour on the page with the visitor's own
+  small palette. Anything the site draws with a background rather than with a
+  border therefore disappears: all the color-mix() tints on the library rows,
+  the audio sections and the player become the same flat Canvas colour, and the
+  round social buttons vanish into the footer entirely.
+
+  The fix is to give those surfaces a real border, which forced-colors keeps,
+  and to let the system's own colours through everywhere else. The system
+  keywords below (CanvasText, Highlight, ButtonBorder) resolve to whatever the
+  visitor has chosen, so this block never assumes a particular theme.
+*/
+@media (forced-colors: active) {
+  /* forced-colors ignores outline colour on some elements; Highlight is the
+     one colour guaranteed to stand out against the visitor's background. */
+  :focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
+
+  /* Give every tinted surface an edge, since its background is being
+     overridden to a flat colour and would otherwise merge with the page. */
+  .skip-link { border: 1px solid ButtonBorder; }
+
+  /* Images are left alone: forced-colors would otherwise recolour the
+     magazine artwork, which is the one thing on this site that must survive. */
+  img { forced-color-adjust: none; }
 }

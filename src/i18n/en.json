@@ -5,6 +5,48 @@
     "tagline": "The art magazine of the Qualia Art Youth Group",
     "description": "Read and download every volume of Qualia Typo."
   },
+  "titles": {
+    "home": "Qualia Typo — The art magazine of the Qualia Art Youth Group",
+    "library": "Library · Qualia Typo",
+    "audio": "Audio library · Qualia Typo",
+    "reader": "Volume {{n}} · Qualia Typo",
+    "notFound": "Page not found · Qualia Typo"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "pageChanged": "Navigated to {{title}}",
+    "mainNav": "Main navigation",
+    "readerToolbar": "Reading tools",
+    "readerTitle": "Qualia Typo — volume {{n}}",
+    "thumbnailStrip": "Page thumbnails",
+    "comingSoonTile": "Volume {{n}} — coming soon",
+    "panel": {
+      "open": "Accessibility tools",
+      "close": "Close",
+      "title": "Accessibility",
+      "note": "Settings are kept in this browser only.",
+      "textSize": "Text size",
+      "textBigger": "Larger text",
+      "textSmaller": "Smaller text",
+      "percent": "{{value}}%",
+      "colours": "Colours",
+      "grayscale": "Grayscale",
+      "highContrast": "High contrast",
+      "negative": "Negative contrast",
+      "reading": "Reading",
+      "underlineLinks": "Underline links",
+      "dyslexiaFont": "Dyslexia-friendly font",
+      "textSpacing": "Text spacing",
+      "readingMask": "Reading mask",
+      "readingGuide": "Reading guide",
+      "pointer": "Mouse pointer",
+      "cursorBigger": "Larger pointer",
+      "cursorSmaller": "Smaller pointer",
+      "cursorSize": "Pointer size",
+      "pointerOnly": "Needs a mouse.",
+      "reset": "Reset settings"
+    }
+  },
   "nav": {
     "home": "Home",
     "library": "Library",

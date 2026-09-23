@@ -15,6 +15,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { recallLanguage } from './i18n/LanguageProvider';
 import './styles/global.css';
+// After global.css on purpose: the accessibility panel's rules override the
+// site's own tokens, and on equal specificity the later rule wins.
+import './a11y/a11y.css';
 
 /**
  * A returning visitor who chose English should land in English, but only from

@@ -45,7 +45,7 @@
 .quiet {
   background: var(--paper-sunk);
   color: var(--ink-soft);
-  border-color: var(--rule);
+  border-color: var(--rule-strong);
   padding: 0.6rem 1.15rem;
   font-size: 0.9rem;
 }
@@ -53,4 +53,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .base:hover { transform: none; }
+}
+
+/*
+  Windows High Contrast Mode replaces every background with the visitor's own
+  Canvas colour, so .primary — which is nothing but a dark background — loses
+  its shape entirely and reads as bare text. Its border is transparent, and
+  forced-colors keeps transparent transparent. Giving every variant a real
+  border is what makes the buttons still look like buttons there.
+*/
+@media (forced-colors: active) {
+  .base { border-color: ButtonBorder; }
+  .base:disabled { border-color: GrayText; color: GrayText; }
 }

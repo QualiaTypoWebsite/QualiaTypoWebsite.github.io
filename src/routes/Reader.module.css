@@ -52,7 +52,7 @@
   width: 36px;
   height: 36px;
   border-radius: 999px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   background: transparent;
   cursor: pointer;
   color: var(--ink-soft);
@@ -61,12 +61,18 @@
 }
 .tool:hover:not(:disabled) {
   color: var(--ink);
-  border-color: var(--accent);
+  /* --accent-ink, or hovering a toolbar button on volume 4 would take its
+     border from 3.22:1 down to 1.20:1 — the one state where the outline
+     matters most becoming the one where it cannot be seen. */
+  border-color: var(--accent-ink);
   background: color-mix(in srgb, var(--accent) 10%, transparent);
   transform: translateY(-1px);
 }
 .tool:disabled { opacity: 0.35; cursor: default; }
-.tool.on { border-color: var(--accent); color: var(--accent); }
+/* The pressed state of the thumbnails toggle. --accent-ink because the raw
+   cover colour measured 1.20:1 here on volume 4 — a state you could not
+   see (WCAG 1.4.11). */
+.tool.on { border-color: var(--accent-ink); color: var(--accent-ink); }
 
 .stage {
   flex: 1;
@@ -109,7 +115,9 @@
     transform 0.2s var(--ease-spring);
 }
 .thumb:hover { opacity: 1; transform: translateY(-3px); }
-.thumb.current { opacity: 1; outline-color: var(--accent); }
+/* Which page you are on. Same reason as .tool.on above: at 1.10:1 the
+   volume 4 outline was invisible against the strip. */
+.thumb.current { opacity: 1; outline-color: var(--accent-ink); }
 .thumb img { width: 100%; aspect-ratio: 1400 / 1986; object-fit: cover; display: block; }
 
 .message {

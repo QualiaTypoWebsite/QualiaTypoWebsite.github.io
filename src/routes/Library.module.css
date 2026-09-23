@@ -42,8 +42,10 @@
   font-size: 0.76rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
-  filter: saturate(0.85) brightness(0.82);
+  /* --accent-ink, not --accent: this is text, and volume 3's green and
+     volume 4's yellow measured 2.87:1 and 1.81:1 here even with the
+     filter that used to stand in for this. */
+  color: var(--accent-ink);
 }
 
 .volTitle { font-size: clamp(1.3rem, 2.6vw, 1.8rem); margin: 0.35rem 0 0.5rem; }

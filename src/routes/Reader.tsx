@@ -105,9 +105,19 @@ export function Reader() {
       ref={shellRef}
       style={{ '--accent': volume.accent } as React.CSSProperties}
     >
-      <div className={styles.toolbar}>
+      {/* The reader had no heading at all, which left the page with nothing to
+          name it in a screen reader's heading list and no <h1> to start its
+          outline. It is hidden rather than drawn, because the toolbar and the
+          book already say which volume this is to anyone who can see them. */}
+      <h1 className="sr-only">{t('a11y.readerTitle', { n: volume.volume })}</h1>
+
+      {/* role="group" rather than role="toolbar": a toolbar promises arrow-key
+          navigation between its controls, and on this page the arrow keys are
+          already spoken for — they turn the page. Promising a keyboard contract
+          and then not honouring it is worse than not claiming one. */}
+      <div className={styles.toolbar} role="group" aria-label={t('a11y.readerToolbar')}>
         <Link to={to('/library')} className={styles.back}>
-          ← <span>{t('reader.back')}</span>
+          <span aria-hidden="true">←</span> <span>{t('reader.back')}</span>
         </Link>
 
         <button
@@ -116,7 +126,7 @@ export function Reader() {
           onClick={() => bookRef.current?.prev()}
           aria-label={t('reader.previous')}
         >
-          ‹
+          <span aria-hidden="true">‹</span>
         </button>
         <span className={styles.counter}>
           {t('reader.pageOf', { current: page, total: volume.pages })}
@@ -127,7 +137,7 @@ export function Reader() {
           onClick={() => bookRef.current?.next()}
           aria-label={t('reader.next')}
         >
-          ›
+          <span aria-hidden="true">›</span>
         </button>
 
         <button
@@ -137,7 +147,7 @@ export function Reader() {
           disabled={zoomStep === 0}
           aria-label={t('reader.zoomOut')}
         >
-          −
+          <span aria-hidden="true">−</span>
         </button>
         <button
           type="button"
@@ -146,7 +156,7 @@ export function Reader() {
           disabled={zoomStep === ZOOM_STEPS.length - 1}
           aria-label={t('reader.zoomIn')}
         >
-          +
+          <span aria-hidden="true">+</span>
         </button>
 
         <button
@@ -156,7 +166,7 @@ export function Reader() {
           aria-pressed={showStrip}
           aria-label={t('reader.toggleThumbnails')}
         >
-          ▤
+          <span aria-hidden="true">▤</span>
         </button>
         <button
           type="button"
@@ -164,7 +174,7 @@ export function Reader() {
           onClick={toggleFullscreen}
           aria-label={isFullscreen ? t('reader.exitFullscreen') : t('reader.fullscreen')}
         >
-          ⛶
+          <span aria-hidden="true">⛶</span>
         </button>
         <a
           className={styles.tool}
@@ -172,7 +182,7 @@ export function Reader() {
           download
           aria-label={t('reader.download')}
         >
-          ↓
+          <span aria-hidden="true">↓</span>
         </a>
       </div>
 
@@ -197,7 +207,11 @@ export function Reader() {
       <p className={styles.hint}>{t('reader.hint')}</p>
 
       {showStrip && (
-        <div className={styles.strip} aria-label={t('reader.thumbnails')}>
+        /* aria-label on a bare <div> is ignored: a label has to name a role,
+           and a div has none. role="group" gives it one, so the strip is
+           announced as a labelled region instead of as a loose pile of
+           seventy buttons. */
+        <div className={styles.strip} role="group" aria-label={t('a11y.thumbnailStrip')}>
           {Array.from({ length: volume.pages }, (_, i) => i + 1).map((n) => (
             <button
               key={n}

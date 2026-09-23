@@ -26,14 +26,18 @@ sudo dnf install poppler-utils ImageMagick     # Fedora
 sudo apt-get install poppler-utils imagemagick # Debian/Ubuntu
 ```
 
-## Adding volume 4
+## Adding a volume
 
-1. Drop the PDF into `assets/magazine_vols/` with a number in the filename, e.g. `QUALIA 4.pdf`.
-2. Run `npm run pages`.
+All four volumes are published. To add a fifth:
 
-That is the whole process. `src/data/volumes.ts` already reserves an entry for
-volume 4 (its accent colour and year); adjust those if needed. Until the PDF
-exists the site shows it as "coming soon" on the homepage and in the library.
+1. Drop the PDF into `assets/magazine_vols/` with a number in the filename, e.g. `QUALIA 5.pdf`.
+2. Add an entry to `VOLUME_META` in `src/data/volumes.ts` — its accent colour and year.
+3. Run `npm run pages`.
+
+That is the whole process: the site asks at load time which volumes actually
+exist, so nothing else needs changing. A volume listed in `VOLUME_META` whose
+PDF is not there yet shows as "coming soon" on the homepage and in the
+library, which is how volume 4 appeared before it was finished.
 
 ## Editing the text
 
@@ -116,6 +120,80 @@ remind you to update it there too.
 Adding a fifth network means adding an entry to `SOCIALS`, an icon to
 `ICONS` in `src/components/SocialLinks.tsx`, and a label to both i18n files.
 
+## Accessibility
+
+The site is built to **WCAG 2.2 Level AA** — the standard every accessibility
+law points at, including the European Accessibility Act and Greek law
+4727/2020. On top of that there is a panel of display preferences, reached from
+the blue button in the bottom-right corner of every page.
+
+Those are two different things, and the order matters: **the site conforms on
+its own, and the panel is a convenience offered on top of it.** Bolt-on
+accessibility widgets have a deservedly poor reputation — they are sold as
+instant compliance, they fix a fraction of what is actually wrong, and they
+routinely fight the assistive technology they claim to help. This one is not
+sold as anything. It is first-party, it ships with the site, it stores nothing
+anywhere but the visitor's own browser, and it sits on a site that works
+without it. Please do not describe it as making the site accessible; the work
+below is what does that.
+
+### What conformance meant in practice
+
+Colour is the part worth knowing about, because the palette is deliberately
+quiet and quiet is easy to get wrong. Every colour in `src/styles/global.css`
+carries its measured contrast ratio in a comment next to it. Three tokens exist
+purely to keep that honest:
+
+| Token | For | Measures |
+|---|---|---|
+| `--ink-faint` | the quietest text — footer, eyebrows, hints | 4.74:1 |
+| `--rule-strong` | the border of anything you can operate | 3.22:1 |
+| `--accent-ink` | a volume's colour when used as **text** | 4.65:1 |
+
+The last one is the subtle one. `--accent` is a magazine cover colour at full
+saturation, and two of the four are light — volume 3's green measures 2.00:1 on
+paper and volume 4's yellow 1.20:1. Backgrounds and borders may use `--accent`
+freely; **anything a reader has to make out uses `--accent-ink`**, which is the
+same colour mixed 40% into ink. It is declared on `*` rather than on `:root`,
+and the comment there explains why — it is a genuine CSS trap.
+
+Beyond colour: every route sets its own `<title>` and announces itself on
+navigation, the focus ring is a single ink colour that works on every
+background the site has, and there is a `forced-colors` path so nothing
+vanishes in Windows High Contrast Mode.
+
+### The panel
+
+`src/a11y/`. Text size, pointer size, greyscale, high contrast, negative
+contrast, underlined links, a dyslexia-friendly typeface, WCAG-standard text
+spacing, a reading mask, a reading guide, and a reset.
+
+Everything it does is a CSS custom property or a `data-*` attribute on
+`<html>`, which is possible only because the site already funnels every colour
+and every typeface through a token. **To add a setting:** add a field to
+`A11ySettings` in `settings.ts`, map it in `documentStateFor`, add a rule to
+`a11y.css` keyed off the new attribute, add a `<Toggle>` to `A11yPanel.tsx`,
+and add its label to both i18n files. The tests in `settings.test.ts` will tell
+you if you have missed a step.
+
+Two things in there are load-bearing and look like they could be simplified:
+
+- **The colour treatments filter a wrapper `<div>`, not `<html>`.** A filtered
+  element becomes the containing block for its `position: fixed` descendants,
+  so a filter any higher up would quietly un-fix the audio player and the
+  accessibility button itself. `App.tsx` wraps the top bar, main content and
+  footer in `.a11yFilterable` and leaves everything fixed outside it.
+- **High contrast is a token override, not a filter.** No filter can create
+  contrast.
+
+**The dyslexia-friendly typeface** is OpenDyslexic, under the SIL Open Font
+License, self-hosted in `public/fonts/` alongside the wordmark face. The
+published webfont build of it is Latin-only, which is no use on a site whose
+default language is Greek, so `opendyslexic-400.woff2` and `-700.woff2` are
+subsets cut from the upstream font, which does carry the full modern Greek
+alphabet. They are about 38 KB each and are fetched only if a visitor switches
+the option on.
+
 ## The logo
 
 `src/components/Logo.tsx` draws a placeholder mark. Replace its contents with
@@ -132,6 +210,7 @@ the real artwork when there is one.
 | Homepage, library, reader, audio library | `src/routes/` |
 | Recording list, aliases and bucket URL | `src/data/recordings.ts` |
 | Audio player and playback state | `src/audio/` |
+| Accessibility panel and its settings | `src/a11y/` |
 
 Page images are build output and are **not** committed — CI regenerates them on
 every deploy, which keeps the repo to just the source PDFs.

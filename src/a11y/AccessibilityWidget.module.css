@@ -1,0 +1,118 @@
+/*
+  The launcher and the card it opens.
+
+  Both sit above .a11yFilter (z-index 2147483000 in a11y.css) on purpose: with
+  greyscale or negative contrast switched on, the overlay filters everything
+  painted beneath it, and the panel has to stay in true colour — it is how the
+  treatment gets switched off again.
+
+  The blue is the one saturated colour in the site's chrome, and it is here
+  because this control has to be found rather than blend in: it is the
+  convention people look for, in the corner they look in. Measured at 6.49:1
+  for the white mark on it, and 6.13:1 for the disc against the paper.
+*/
+.root {
+  --a11y-blue: #1b5eab;
+  --a11y-blue-deep: #14477f;
+
+  position: fixed;
+  right: clamp(0.75rem, 2.5vw, 1.5rem);
+  bottom: clamp(0.75rem, 2.5vw, 1.5rem);
+  z-index: 2147483100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.7rem;
+  /* The wrapper is only a positioner; clicks belong to its children, so the
+     empty space beside the button does not swallow them. */
+  pointer-events: none;
+}
+
+.root > * { pointer-events: auto; }
+
+.launcher {
+  display: grid;
+  place-items: center;
+  /* 52px: comfortably past the 24x24 of WCAG 2.5.8, and big enough to hit
+     without aiming, which is rather the point of this particular button. */
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--a11y-blue);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 6px 20px -6px rgba(16, 40, 80, 0.55);
+  transition: background 0.2s var(--ease-out), transform 0.2s var(--ease-spring);
+}
+
+.launcher:hover { background: var(--a11y-blue-deep); transform: translateY(-2px); }
+.launcher:active { transform: translateY(0); }
+
+/*
+  The card. Anchored to the bottom-right with the launcher, and capped in
+  height so a long list scrolls inside the card rather than growing off the
+  top of a short window.
+*/
+.panel {
+  width: min(22.5rem, calc(100vw - 1.5rem));
+  max-height: min(78vh, 40rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1rem 1.1rem 1.1rem;
+  border-radius: 18px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  box-shadow: 0 24px 50px -24px rgba(26, 22, 18, 0.55);
+  /* Used by the negative-contrast icon, which punches its own background
+     colour out of a filled square. */
+  --panel-bg: var(--paper);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  /* 32px rather than the 28px the audio player's close uses, because this one
+     is the way out of a panel rather than a dismissal of a card. */
+  width: 32px;
+  height: 32px;
+  margin-right: -0.3rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+
+.close:hover { background: var(--paper-sunk); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher:hover { transform: none; }
+}
+
+/*
+  In forced-colors the blue disc is replaced by the system's own button
+  colours, so the mark needs a border to keep its shape.
+*/
+@media (forced-colors: active) {
+  .launcher { border: 1px solid ButtonBorder; }
+  .panel { border-color: CanvasText; }
+}
