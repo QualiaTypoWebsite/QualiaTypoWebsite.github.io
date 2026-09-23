@@ -88,7 +88,9 @@ the same order: `src/data/recordings.ts`, then `src/audio/queue.ts`, then
 | File | What it does |
 |------|--------------|
 | `source-sans-3-*.woff2` | Source Sans 3, variable (weights 200–900), used **only** for the words "Qualia Typo" — the homepage hero title and the top bar wordmark. One file per unicode range (latin, latin-ext, greek); the browser fetches only what a page needs, which in practice is the ~29 KB latin file. The `@font-face` rules are in `global.css`. |
-| `OFL.txt` | The SIL Open Font License the typeface ships under. It stays next to the files. |
+| `opendyslexic-400.woff2` / `-700.woff2` | OpenDyslexic, offered by the accessibility panel as a dyslexia-friendly alternative. Subsets cut to Latin + Greek, ~38 KB each; the published build of this font is Latin-only, which would be no use on a Greek-default site. Fetched only when a visitor switches the option on. |
+| `OFL.txt` | The SIL Open Font License Source Sans 3 ships under. It stays next to the files. |
+| `OFL-OpenDyslexic.txt` | The same licence for OpenDyslexic, whose copyright line is a different one. |
 
 Unlike `public/magazines/`, these **are** committed — nothing regenerates them.
 
@@ -97,7 +99,7 @@ Unlike `public/magazines/`, these **are** committed — nothing regenerates them
 | File | What it does |
 |------|--------------|
 | `main.tsx` | Starts React and mounts the app. Also handles one small thing: if you previously chose English, arriving at the bare root sends you to `/en`. |
-| `App.tsx` | The route table and the page shell (top bar, main area, footer, audio player). The route list is defined once and mounted **twice** — once at `/` for Greek, once at `/en` for English. The audio player is mounted above the routes, so playback survives navigation. |
+| `App.tsx` | The route table and the page shell (top bar, main area, footer, audio player, accessibility button). The route list is defined once and mounted **twice** — once at `/` for Greek, once at `/en` for English. The audio player and the accessibility settings are both mounted above the routes, so neither is lost on navigation. The shell also wraps the top bar, main and footer in `.a11yFilterable` — see `src/a11y/`. |
 | `vite-env.d.ts` | One line that tells TypeScript what a `.module.css` import is. |
 | `test-setup.ts` | Fills in browser features jsdom lacks, so tests can run. |
 | `App.test.tsx` | Renders real pages and checks they work — the safety net for the whole app. |
@@ -212,6 +214,51 @@ a recording keeps playing while the visitor browses the library or reads the
 magazine. The queue is one volume: finishing the last recording stops rather
 than rolling on into a different volume.
 
+### `src/a11y/` — accessibility
+
+Two separate jobs live here, and it is worth keeping them apart in your head.
+
+The first is **the site's own conformance**: `pageTitle.ts` and
+`PageAnnouncer.tsx` give each route its own `<title>` and say out loud when the
+page has changed, which a single page application does not do by itself. That
+is not optional polish — it is WCAG 2.4.2, and it applies whether or not anyone
+ever opens the panel.
+
+The second is **the panel**: the blue button in the bottom-right corner of
+every page, offering display preferences.
+
+| File | What it does |
+|------|--------------|
+| `pageTitle.ts` | Pure, no React: which title belongs to which URL. Tested directly, like `pagination.ts`. |
+| `PageAnnouncer.tsx` | Writes `document.title`, and announces navigation through a live region. Renders nothing visible. |
+| `settings.ts` | Pure, no React: what the panel can be set to, what is allowed, and how a settings object becomes attributes on `<html>`. The rules live here and nowhere else. Tested directly. |
+| `A11yProvider.tsx` | Holds the settings, persists them to this browser, and writes them on to `<html>` in one effect. Mounted above the route table. |
+| `AccessibilityWidget.tsx` | The launcher, the card, and the focus handling. |
+| `A11yPanel.tsx` | What is inside the card. |
+| `A11yIcons.tsx` | Hand-drawn inline SVG, like `PlayerIcons.tsx`. |
+| `ReadingAids.tsx` | The reading mask and the reading guide — the only part that watches the pointer. |
+| `a11y.css` | The rules every setting is keyed off. Global, not a module, because they are `html[data-*] …` descendant selectors. |
+
+**How the panel works, in one line:** the provider writes `data-a11y-*`
+attributes on `<html>`, and `a11y.css` restyles the site by overriding the
+tokens in `global.css`. Nothing else in the codebase knows the panel exists.
+
+**The one piece of structure it imposes on the rest of the app.** The greyscale
+and negative settings are a CSS `filter`, and a filtered element becomes the
+containing block for its `position: fixed` descendants. Put that filter on
+`<html>` and the audio player, the reading aids and the accessibility button
+all stop being fixed and scroll away with the page. So `App.tsx` wraps the top
+bar, the main content and the footer in a `.a11yFilterable` div and keeps every
+fixed thing outside it. The top bar is `sticky`, not `fixed`, and is unharmed.
+
+That is also why the panel is painted outside the wrapper: with a treatment on,
+it stays in true colour, which matters because it is how the treatment gets
+switched off again.
+
+**What it is not.** These are display preferences. The site's own markup and
+colours are what make it accessible — see the Accessibility section of
+`README.md`, and the measured contrast ratios commented in `global.css`.
+
 ### `src/routes/` — the pages
 
 | File | What it does |
@@ -248,6 +295,22 @@ are the covers' own colours, taken from the artwork. The rule the design
 follows: **the pastels are for the site, the saturated colours belong to the
 magazines.** On a volume's page, `--accent` is set to that volume's colour and
 the buttons, focus rings and glow pick it up automatically.
+
+### Colour, and the two accent tokens
+
+`--accent` is a magazine cover colour at full saturation. Two of the four are
+light: volume 3's green measures 2.00:1 against the paper and volume 4's yellow
+1.20:1, both far below the 4.5:1 that text needs. So there are two tokens.
+`--accent` is for backgrounds, borders and glows; **`--accent-ink` is for
+anything a reader has to make out** — the "ΤΟΜΟΣ 4" labels, the active toolbar
+toggle, the current thumbnail. It is the same colour mixed 40% into ink, which
+is the largest share that still clears 4.5:1 for every volume.
+
+It is declared on `*` rather than on `:root`, and that is not an accident: a
+`var()` inside a custom property is substituted on the element that *declares*
+it, so a `:root` declaration would resolve once against volume 1's pink and
+every row would inherit that finished colour. The comment in `global.css`
+spells this out.
 
 ### Reduced motion
 

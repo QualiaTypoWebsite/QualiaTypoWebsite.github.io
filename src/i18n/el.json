@@ -5,6 +5,48 @@
     "tagline": "Το περιοδικό τέχνης της ομάδας νέων Qualia",
     "description": "Διαβάστε και κατεβάστε όλους τους τόμους του Qualia Typo."
   },
+  "titles": {
+    "home": "Qualia Typo — Το περιοδικό τέχνης της ομάδας νέων Qualia",
+    "library": "Βιβλιοθήκη · Qualia Typo",
+    "audio": "Ηχητική βιβλιοθήκη · Qualia Typo",
+    "reader": "Τόμος {{n}} · Qualia Typo",
+    "notFound": "Η σελίδα δεν βρέθηκε · Qualia Typo"
+  },
+  "a11y": {
+    "skipToContent": "Μετάβαση στο περιεχόμενο",
+    "pageChanged": "Μεταβήκατε στη σελίδα {{title}}",
+    "mainNav": "Κύρια πλοήγηση",
+    "readerToolbar": "Εργαλεία ανάγνωσης",
+    "readerTitle": "Qualia Typo — τόμος {{n}}",
+    "thumbnailStrip": "Μικρογραφίες σελίδων",
+    "comingSoonTile": "Τόμος {{n}} — σύντομα",
+    "panel": {
+      "open": "Εργαλεία προσβασιμότητας",
+      "close": "Κλείσιμο",
+      "title": "Προσβασιμότητα",
+      "note": "Οι ρυθμίσεις αποθηκεύονται μόνο σε αυτό το πρόγραμμα περιήγησης.",
+      "textSize": "Μέγεθος κειμένου",
+      "textBigger": "Μεγαλύτερο κείμενο",
+      "textSmaller": "Μικρότερο κείμενο",
+      "percent": "{{value}}%",
+      "colours": "Χρώματα",
+      "grayscale": "Κλίμακα του γκρι",
+      "highContrast": "Υψηλή αντίθεση",
+      "negative": "Αρνητική αντίθεση",
+      "reading": "Ανάγνωση",
+      "underlineLinks": "Υπογράμμιση συνδέσμων",
+      "dyslexiaFont": "Γραμματοσειρά για δυσλεξία",
+      "textSpacing": "Αραίωση κειμένου",
+      "readingMask": "Μάσκα ανάγνωσης",
+      "readingGuide": "Οδηγός ανάγνωσης",
+      "pointer": "Δείκτης ποντικιού",
+      "cursorBigger": "Μεγαλύτερος δείκτης",
+      "cursorSmaller": "Μικρότερος δείκτης",
+      "cursorSize": "Μέγεθος δείκτη",
+      "pointerOnly": "Χρειάζονται ποντίκι.",
+      "reset": "Επαναφορά ρυθμίσεων"
+    }
+  },
   "nav": {
     "home": "Αρχική",
     "library": "Βιβλιοθήκη",

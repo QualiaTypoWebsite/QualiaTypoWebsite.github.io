@@ -1,0 +1,88 @@
+/*
+  The reading mask and the reading guide.
+
+  Both are fixed, cover the viewport, and never take a pointer event — they sit
+  on top of the page without standing between the reader and it.
+
+  --y is the pointer's distance from the top of the viewport, written on the
+  element by ReadingAids.tsx once per animation frame.
+
+  The z-index puts them above the page but below the accessibility panel
+  (z-index 2147483100 and up), so the panel that switches them off is never
+  itself behind the mask.
+*/
+
+.mask,
+.guide {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482900;
+  pointer-events: none;
+}
+
+/*
+  The mask is two dimmed bands with a clear gap between them, drawn as the two
+  pseudo-elements of one box. --band is the height of the clear strip: tall
+  enough for a couple of lines of body copy at the site's own size, so the
+  reader sees the line they are on plus the one they are heading into.
+*/
+.mask {
+  --band: 7.5rem;
+  background: none;
+}
+
+.mask::before,
+.mask::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Not pure black: at full strength the dimmed part becomes a void and the
+     reader loses all sense of where they are on the page. */
+  background: rgba(16, 14, 12, 0.72);
+}
+
+.mask::before {
+  top: 0;
+  /* max() keeps the band from inverting when the pointer is near the top. */
+  height: max(0px, calc(var(--y) - var(--band) / 2));
+}
+
+.mask::after {
+  top: calc(var(--y) + var(--band) / 2);
+  bottom: 0;
+}
+
+/*
+  The guide is a single ruler line. It is drawn as a dark bar with a light
+  edge above and below, so it stays visible over the paper, over a pastel
+  section and over a white magazine page alike — the same reasoning as the
+  focus ring in global.css.
+*/
+.guide::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--y);
+  height: 3px;
+  margin-top: -1.5px;
+  background: rgba(16, 14, 12, 0.92);
+  box-shadow:
+    0 -2px 0 rgba(255, 255, 255, 0.85),
+    0 2px 0 rgba(255, 255, 255, 0.85);
+}
+
+/*
+  In forced-colors the rgba fills are replaced wholesale, which would leave the
+  mask as a flat block hiding the page. The guide still works, so the mask
+  simply steps aside.
+*/
+@media (forced-colors: active) {
+  .mask { display: none; }
+  .guide::after {
+    background: Highlight;
+    box-shadow: none;
+    height: 4px;
+  }
+}

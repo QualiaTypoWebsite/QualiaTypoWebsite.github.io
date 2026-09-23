@@ -1,0 +1,231 @@
+/*
+  What the accessibility panel does to the page.
+
+  Every rule here is keyed off an attribute that A11yProvider writes on to
+  <html>. Nothing in the rest of the site knows this file exists — which is
+  only possible because global.css already funnels every colour and every
+  typeface through a token, so changing a handful of tokens changes the whole
+  site.
+
+  Loaded after global.css in main.tsx, so these rules win on equal specificity.
+
+  These are display preferences, and that is all they are. What makes the site
+  accessible is its own markup and its own colours; see docs/ARCHITECTURE.md.
+*/
+
+/* ── The dyslexia-friendly typeface ───────────────────────────────────────
+   OpenDyslexic, by Abbie Gonzalez, under the SIL Open Font License — the
+   licence sits next to the files in public/fonts/OFL-OpenDyslexic.txt.
+
+   The letters have weighted bottoms, which is the whole idea: it gives each
+   one an unambiguous "down", so shapes that are rotations or mirrors of each
+   other (b/d/p/q, n/u) stop being confusable.
+
+   The published webfont build is Latin-only, which would be no use on a site
+   whose default language is Greek. These are subsets cut from the upstream
+   font, which does carry the full modern Greek alphabet, accents and final
+   sigma included — about 38 KB per weight, the same order as the wordmark
+   face already in public/fonts.
+
+   The browser fetches them only when a rule below actually applies, so a
+   visitor who never switches this on never downloads them.
+*/
+@font-face {
+  font-family: 'OpenDyslexic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/opendyslexic-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'OpenDyslexic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/opendyslexic-700.woff2') format('woff2');
+}
+
+/* ── Text size ────────────────────────────────────────────────────────────
+   Multiplies the root size, which every rem on the site is measured against.
+   This works only because global.css sets html { font-size: 100% } and the
+   body size in rem; while the body was pinned at 17px there was nothing here
+   to scale.
+
+   The custom property is absent until the visitor changes it, and var()'s own
+   fallback of 1 then leaves the root size exactly where global.css put it.
+*/
+html {
+  font-size: calc(100% * var(--a11y-font-scale, 1));
+}
+
+/* ── Colour treatments ────────────────────────────────────────────────────
+   Greyscale and negative are a plain filter on .a11yFilterable, the wrapper
+   App.tsx puts around the top bar, the main content and the footer.
+
+   The obvious place for that filter is <html>, and it is a trap: a filtered
+   element becomes the containing block for its position: fixed descendants,
+   so the audio player, the reading aids and the accessibility button itself
+   would stop being fixed and scroll away with the page. Wrapping only the
+   content, and leaving the fixed furniture outside the wrapper as siblings,
+   avoids that entirely — the wrapper has no fixed descendants to break.
+
+   The first attempt used backdrop-filter on a transparent overlay, which is
+   tidier still and needs no wrapper. It was abandoned because it renders as
+   nothing at all in Firefox under software rendering, and a colour setting
+   that silently does nothing is worse than no setting. A plain filter works
+   everywhere.
+
+   The accessibility panel sits outside the wrapper too, so it stays in true
+   colour while a treatment is on — which matters, because it is how the
+   treatment gets switched off again.
+*/
+html[data-a11y-contrast='grayscale'] .a11yFilterable {
+  filter: grayscale(1);
+}
+
+html[data-a11y-contrast='negative'] .a11yFilterable {
+  filter: invert(1);
+}
+
+/*
+  Under negative contrast the images are inverted once here and once more by
+  the wrapper above, which lands them back exactly where they started. Most
+  such widgets invert the pictures along with everything else; this site exists
+  to show an art magazine, and showing the art in negative defeats the page.
+
+  Plain invert(1) rather than the usual invert + hue-rotate, precisely so the
+  two inversions cancel out exactly instead of approximately.
+*/
+html[data-a11y-contrast='negative'] img {
+  filter: invert(1);
+}
+
+/*
+  High contrast is a token override, not a filter. No filter can create
+  contrast — contrast() only stretches what is already there, and blows the
+  pastels out on the way. Redefining the tokens produces a real theme.
+
+  --accent-ink needs no rule of its own: it is derived from --accent and --ink
+  on every element, so once --ink is white it follows automatically.
+*/
+html[data-a11y-contrast='high'] {
+  --paper: #000000;
+  --paper-sunk: #0d0d0d;
+  --ink: #ffffff;
+  --ink-soft: #f2f2f2;
+  --ink-faint: #dcdcdc;
+  --rule: #5a5a5a;
+  --rule-strong: #d0d0d0;
+  --focus-ring: #ffd400;
+  --accent: #ffd400;
+  --blush: #000000;
+  --periwinkle: #000000;
+  --celadon: #000000;
+  --butter: #000000;
+  /* Tells the browser to draw scrollbars and form controls dark to match. */
+  color-scheme: dark;
+}
+
+/* The pastel washes on the homepage sections are gradients, not tokens, so
+   they have to be flattened by hand. */
+html[data-a11y-contrast='high'] section[id='about'],
+html[data-a11y-contrast='high'] section[id='group'] {
+  background: #000000;
+}
+
+/* The magazine artwork keeps its own colours; it is the content, not chrome. */
+html[data-a11y-contrast='high'] img {
+  /* A rim so a dark cover does not bleed into a black page. */
+  outline: 1px solid var(--rule);
+  outline-offset: -1px;
+}
+
+/* ── Underline links ──────────────────────────────────────────────────────
+   Colour alone is a weak signal, and this site deliberately styles most of its
+   links without one. This makes every link unmistakable.
+*/
+html[data-a11y-underline] a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ── Dyslexia-friendly typeface ───────────────────────────────────────────
+   Three tokens, and the entire site follows — including the wordmark, which
+   is the point: a visitor who needs this typeface needs it everywhere, not
+   everywhere except the headings.
+*/
+html[data-a11y-font='dyslexic'] {
+  --font-body: 'OpenDyslexic', 'Comic Sans MS', Verdana, sans-serif;
+  --font-display: 'OpenDyslexic', 'Comic Sans MS', Verdana, sans-serif;
+  --font-title: 'OpenDyslexic', 'Comic Sans MS', Verdana, sans-serif;
+}
+
+/* OpenDyslexic runs large for its point size, and its letterforms need room;
+   without this the headings collide with their own descenders. */
+html[data-a11y-font='dyslexic'] body {
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+}
+html[data-a11y-font='dyslexic'] h1,
+html[data-a11y-font='dyslexic'] h2,
+html[data-a11y-font='dyslexic'] h3 {
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* ── Text spacing ─────────────────────────────────────────────────────────
+   The four values named in WCAG 1.4.12 Text Spacing, which is the spacing a
+   page has to survive a visitor imposing. Offering it directly saves them
+   reaching for a browser extension to do it.
+
+   svg is excluded because letter-spacing inside an icon shifts its geometry,
+   and every icon on this site is drawn rather than typed.
+*/
+html[data-a11y-spacing] *:not(svg):not(svg *) {
+  line-height: 1.5 !important;
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+}
+html[data-a11y-spacing] p {
+  margin-bottom: 2em !important;
+}
+
+/* ── Pointer size ─────────────────────────────────────────────────────────
+   Two SVG cursors as data URIs, so the feature ships no asset files. Each is
+   drawn in black with a white outline, which is what keeps it visible over a
+   magazine page as well as over the paper.
+
+   The arrow and the hand are declared separately, because losing the hand
+   over links would take away the one cue that says "this can be clicked" —
+   an odd thing for an accessibility feature to do.
+
+   The trailing `auto` and `pointer` are the fallback for any browser that
+   refuses the image, and browsers cap custom cursors at 128px, well above
+   the 64px used here.
+*/
+html[data-a11y-cursor='large'],
+html[data-a11y-cursor='large'] * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath d='M4 2 4 20.5 9 15.8 12 22 15 20.6 12.1 14.7 18.6 14.4Z' fill='%23000' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2, auto;
+}
+html[data-a11y-cursor='huge'],
+html[data-a11y-cursor='huge'] * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24'%3E%3Cpath d='M4 2 4 20.5 9 15.8 12 22 15 20.6 12.1 14.7 18.6 14.4Z' fill='%23000' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2, auto;
+}
+
+html[data-a11y-cursor='large'] a,
+html[data-a11y-cursor='large'] button,
+html[data-a11y-cursor='large'] [role='button'],
+html[data-a11y-cursor='large'] input,
+html[data-a11y-cursor='large'] label,
+html[data-a11y-cursor='large'] summary {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath d='M9.2 11V4.6a1.6 1.6 0 0 1 3.2 0V10m0-.6a1.5 1.5 0 0 1 3 0V11m0-.4a1.5 1.5 0 0 1 3 0v1.2m0-.6a1.4 1.4 0 0 1 2.8 0v3.9c0 3.6-2.3 6.4-6 6.4h-1.9c-2.2 0-3.5-1-4.6-2.7l-2.8-4.4a1.6 1.6 0 0 1 2.5-1.9l1.8 1.9Z' fill='%23000' stroke='%23fff' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 8 2, pointer;
+}
+html[data-a11y-cursor='huge'] a,
+html[data-a11y-cursor='huge'] button,
+html[data-a11y-cursor='huge'] [role='button'],
+html[data-a11y-cursor='huge'] input,
+html[data-a11y-cursor='huge'] label,
+html[data-a11y-cursor='huge'] summary {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24'%3E%3Cpath d='M9.2 11V4.6a1.6 1.6 0 0 1 3.2 0V10m0-.6a1.5 1.5 0 0 1 3 0V11m0-.4a1.5 1.5 0 0 1 3 0v1.2m0-.6a1.4 1.4 0 0 1 2.8 0v3.9c0 3.6-2.3 6.4-6 6.4h-1.9c-2.2 0-3.5-1-4.6-2.7l-2.8-4.4a1.6 1.6 0 0 1 2.5-1.9l1.8 1.9Z' fill='%23000' stroke='%23fff' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 10 2, pointer;
+}

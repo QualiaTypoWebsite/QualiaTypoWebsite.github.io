@@ -68,7 +68,10 @@ describe('the homepage', () => {
     renderAt('/');
     const grid = await screen.findByRole('list', { name: 'Τόμοι του Qualia Typo' });
     expect(await within(grid).findAllByRole('img')).toHaveLength(3);
-    expect(within(grid).getByLabelText(/Τόμος 4 — Σύντομα/)).toBeInTheDocument();
+    // The tile's volume number used to be an aria-label on a bare <div>, which
+    // assistive technology ignores; it is real (visually hidden) text now, so
+    // this looks it up the way a screen reader would find it.
+    expect(within(grid).getByText(/Τόμος 4 — σύντομα/)).toBeInTheDocument();
   });
 });
 
@@ -273,6 +276,64 @@ describe('the audio library', () => {
   it('renders the page in Greek at the root', async () => {
     renderAt('/audio');
     expect(await screen.findByRole('heading', { name: 'Ακούστε το περιοδικό' })).toBeInTheDocument();
+  });
+});
+
+describe('accessibility', () => {
+  it('offers a skip link that says what it does, and points at <main>', async () => {
+    renderAt('/en');
+    // This used to be labelled with t('nav.menu'), so the first thing a
+    // keyboard visitor met on every page was a link reading "Menu".
+    const skip = await screen.findByRole('link', { name: 'Skip to content' });
+    expect(skip).toHaveAttribute('href', '#main');
+
+    // And <main> has to be focusable, or the jump scrolls without moving focus.
+    expect(document.querySelector('main')).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('gives every route its own document title', async () => {
+    renderAt('/en/library');
+    await screen.findByRole('heading', { name: 'Every volume' });
+    expect(document.title).toBe('Library · Qualia Typo');
+  });
+
+  it('names the volume in the reader title, in the right language', async () => {
+    renderAt('/read/2');
+    await screen.findByText('Σελίδα 1 από 70');
+    expect(document.title).toBe('Τόμος 2 · Qualia Typo');
+  });
+
+  it('announces the new page after navigating, but not on arrival', async () => {
+    renderAt('/en/library');
+    await screen.findByRole('heading', { name: 'Every volume' });
+    const status = screen.getByRole('status');
+    // Arriving is already narrated by the browser reading the title.
+    expect(status).toHaveTextContent('');
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('link', { name: 'Audio library' }));
+    await screen.findByRole('heading', { name: 'Listen to the magazine' });
+    expect(status).toHaveTextContent('Navigated to Audio library · Qualia Typo');
+  });
+
+  it('gives the reader an h1, which it did not have at all', async () => {
+    renderAt('/en/read/2');
+    expect(await screen.findByRole('heading', { level: 1 }))
+      .toHaveTextContent('Qualia Typo — volume 2');
+  });
+
+  it('marks the language switcher as being written in the language it leads to', async () => {
+    renderAt('/library');
+    // Greek page, English label: without lang, a screen reader reads
+    // "Switch to English" in a Greek voice (WCAG 3.1.2).
+    const toggle = await screen.findByRole('link', { name: /Switch to English/i });
+    expect(toggle).toHaveAttribute('lang', 'en');
+  });
+
+  it('labels the navigation and the reader toolbar as landmarks and groups', async () => {
+    renderAt('/en/read/2');
+    expect(await screen.findByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Reading tools' })).toBeInTheDocument();
   });
 });
 

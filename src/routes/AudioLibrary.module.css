@@ -48,8 +48,10 @@
   font-size: 0.74rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
-  filter: saturate(0.85) brightness(0.82);
+  /* --accent-ink, not --accent: this is text, and volume 3's green and
+     volume 4's yellow measured 2.87:1 and 1.81:1 here even with the
+     filter that used to stand in for this. */
+  color: var(--accent-ink);
 }
 
 .volTitle {
@@ -129,12 +131,13 @@
   min-width: 0;
   font-family: var(--font-display);
   font-size: 0.9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Wraps rather than clipping to an ellipsis: under the text spacing a
+     visitor is entitled to set (WCAG 1.4.12), a clipped line silently loses
+     the end of the recording's name. */
+  overflow-wrap: anywhere;
 }
 
-.wave { flex: none; color: var(--accent); display: grid; place-items: center; }
+.wave { flex: none; color: var(--accent-ink); display: grid; place-items: center; }
 .wave svg { width: 18px; height: 18px; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -143,4 +146,14 @@
 
 @media (max-width: 560px) {
   .count { display: none; }
+}
+
+/*
+  Same reason as the player's controls: .trackButton is a background and a
+  transparent border, which forced-colors flattens to nothing. The current
+  track's tint disappears too, so it is marked with a border instead.
+*/
+@media (forced-colors: active) {
+  .trackButton { border-color: ButtonBorder; }
+  .trackCurrent { outline: 2px solid Highlight; outline-offset: -2px; }
 }

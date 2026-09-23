@@ -1,0 +1,206 @@
+/*
+  The controls inside the accessibility card.
+
+  Two shapes: a stepper (a labelled row with − and +) and a toggle (an icon
+  over a label, in a grid). Both are ordinary buttons, so they inherit the
+  site's focus ring and need nothing special to work from a keyboard.
+
+  Every interactive thing here is at least 44px in its smaller dimension —
+  comfortably past the 24x24 that WCAG 2.5.8 asks for, and closer to the 44x44
+  of the stricter 2.5.5, which is the right target for a panel whose visitors
+  may well be the ones who find small targets hard.
+*/
+
+.body { display: grid; gap: 0.55rem; }
+
+/* ── Steppers ─────────────────────────────────────────────────────────── */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.45rem 0.2rem 0.45rem 0.55rem;
+  border-radius: 12px;
+  background: var(--paper-sunk);
+}
+
+.stepperLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--ink);
+  min-width: 0;
+}
+
+.stepperIcon { display: grid; place-items: center; color: var(--ink-soft); flex: none; }
+.stepperIcon svg { width: 18px; height: 18px; }
+
+.stepperControls { display: flex; align-items: center; gap: 0.15rem; flex: none; }
+
+.step {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.18s var(--ease-out), border-color 0.18s var(--ease-out);
+}
+
+.step:hover:not(:disabled) { background: var(--paper); border-color: var(--rule-strong); }
+/* Disabled controls are exempt from the contrast rules, but they still have to
+   read as unavailable rather than as broken. */
+.step:disabled { color: var(--ink-faint); opacity: 0.45; cursor: default; }
+.step svg { width: 19px; height: 19px; }
+
+.stepperValue {
+  min-width: 3.4rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+/* ── Group headings ───────────────────────────────────────────────────── */
+
+.groupLabel {
+  margin: 0.55rem 0 0.1rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ── Toggles ──────────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  min-height: 5.1rem;
+  padding: 0.6rem 0.35rem 0.5rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out),
+    border-color 0.18s var(--ease-out);
+}
+
+.toggle:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+/*
+  The pressed state is carried by the fill and the border as well as by
+  aria-pressed, not by colour alone — the same rule the rest of the site
+  follows, and the reason this is a solid ink block rather than a tint.
+*/
+.toggle[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.toggleIcon { display: grid; place-items: center; }
+.toggleIcon svg { width: 21px; height: 21px; }
+
+.toggleLabel {
+  font-size: 0.72rem;
+  line-height: 1.25;
+  /* Labels like "Γραμματοσειρά για δυσλεξία" are long; they wrap rather than
+     being clipped, so nothing is lost under increased text spacing.
+     break-word rather than anywhere, so a word only breaks when it genuinely
+     cannot fit, instead of at the first tight spot. */
+  overflow-wrap: break-word;
+}
+
+.toggleNote {
+  font-size: 0.62rem;
+  line-height: 1.2;
+  color: var(--ink-faint);
+}
+.toggle[aria-pressed='true'] .toggleNote { color: var(--paper-sunk); }
+
+/* ── Reset, and the note under it ─────────────────────────────────────── */
+
+.reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 0.55rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: background 0.18s var(--ease-out), border-color 0.18s var(--ease-out);
+}
+
+.reset:hover:not(:disabled) { background: var(--paper-sunk); border-color: var(--ink-faint); }
+.reset:disabled { color: var(--ink-faint); opacity: 0.5; cursor: default; }
+.reset svg { width: 17px; height: 17px; }
+
+.note {
+  margin: 0.6rem 0 0;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+
+/* On a narrow card three columns leave no room for a label, so drop to two. */
+@media (max-width: 380px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/*
+  The panel adapts to the settings it is itself applying. OpenDyslexic is a
+  considerably wider typeface, and increased letter and word spacing is wider
+  still; at three columns "Grayscale" broke across two lines as "Grayscal / e".
+  Two columns give every label room, and the card scrolls if it grows.
+*/
+:global(html[data-a11y-font='dyslexic']) .grid,
+:global(html[data-a11y-spacing]) .grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+:global(html[data-a11y-font='dyslexic']) .toggleLabel {
+  font-size: 0.68rem;
+}
+
+/* The stepper's label and its controls stop sharing a line comfortably at
+   these sizes, so let the row wrap rather than squeeze the buttons. */
+:global(html[data-a11y-font='dyslexic']) .stepper,
+:global(html[data-a11y-spacing]) .stepper {
+  flex-wrap: wrap;
+  row-gap: 0.2rem;
+}
+
+@media (forced-colors: active) {
+  .toggle[aria-pressed='true'] {
+    background: Highlight;
+    color: HighlightText;
+    border-color: Highlight;
+  }
+  .step, .reset { border-color: ButtonBorder; }
+}

@@ -29,8 +29,8 @@
   font-size: 0.66rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
-  filter: saturate(0.85) brightness(0.82);
+  /* Text, so --accent-ink — see the token's note in global.css. */
+  color: var(--accent-ink);
   margin: 0;
 }
 
@@ -53,10 +53,11 @@
   font-family: var(--font-display);
   font-size: 0.95rem;
   margin: 0.15rem 0 0.6rem;
-  /* Aliases are one long token; a narrow card must not let it spill out. */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* This used to be one clipped line ending in an ellipsis. WCAG 1.4.12 lets a
+     visitor impose their own letter and word spacing, and clipped text loses
+     content the moment they do — so a long name now wraps and the card grows
+     instead. overflow-wrap catches an alias with no spaces to break at. */
+  overflow-wrap: anywhere;
 }
 
 .scrub { display: flex; align-items: center; gap: 0.55rem; }
@@ -80,7 +81,10 @@
   flex: 1;
   appearance: none;
   -webkit-appearance: none;
-  height: 16px;
+  /* 24px, not the 16px this was, so the bar clears the 24x24 that WCAG 2.5.8
+     Target Size asks of anything you point at. Only the hit area grows: the
+     track below stays 4px and the thumb 12px, so the card looks unchanged. */
+  height: 24px;
   background: transparent;
   cursor: pointer;
   margin: 0;
@@ -163,12 +167,34 @@
   .range:hover::-webkit-slider-thumb { transform: none; }
 }
 
-/* On a phone the card spans the width rather than floating in one corner. */
+/* On a phone the card spans the width rather than floating in one corner —
+   but stops short of the right-hand edge, where the accessibility launcher
+   sits. Without the gap the player would cover the button entirely. */
 @media (max-width: 520px) {
   .player {
     left: 0.5rem;
-    right: 0.5rem;
+    right: calc(0.5rem + 52px + 0.75rem);
     bottom: 0.5rem;
     width: auto;
   }
 }
+
+/*
+  The transport controls are drawn with a background and no border, so in
+  forced-colors they would vanish into the card. The seek bar is rebuilt from
+  gradients, which forced-colors discards too, so it gets a real outline.
+*/
+@media (forced-colors: active) {
+  .control, .close { border: 1px solid ButtonBorder; }
+  .control:disabled { border-color: GrayText; color: GrayText; }
+  .range { forced-color-adjust: none; }
+}
+
+/*
+  The player sits outside the wrapper that the accessibility panel's colour
+  settings filter, because it is position: fixed and a filtered ancestor would
+  stop it being fixed. So it takes the treatment itself instead, which is safe:
+  a filter only un-fixes an element's descendants, and this card has none.
+*/
+:global(html[data-a11y-contrast='grayscale']) .player { filter: grayscale(1); }
+:global(html[data-a11y-contrast='negative']) .player { filter: invert(1); }

@@ -28,7 +28,7 @@ styling is hand-written on purpose, for control over the typography.
 ```bash
 npm run pages   # render the PDFs into page images — run once after cloning
 npm run dev     # dev server on http://localhost:5173
-npm test        # vitest, 82 tests
+npm test        # vitest, 130 tests
 npm run build   # tsc + vite build into dist/
 npm run check:audio  # check every voiceover URL still resolves (needs network)
 ```
@@ -82,6 +82,44 @@ Without it the site runs but every magazine page is a broken image.
   inside a route is unmounted on navigation and the sound stops.
 - **Vite/Vitest/React Router are pinned to exact versions** that are free of the
   CVEs `npm audit` flagged. Keep `npm audit` at zero.
+- **The site targets WCAG 2.2 Level AA on its own, and the accessibility panel
+  is a convenience on top of that** — never a substitute for it, and never
+  described as one. Bolt-on accessibility overlays are discredited for good
+  reasons; what keeps this one honest is that the site conforms without it.
+  Don't add a claim anywhere that the button makes the site accessible.
+- **Every colour in `global.css` carries its measured contrast ratio in a
+  comment.** If you change one, re-measure it against all five surfaces the
+  site paints — paper, sunk paper, the two homepage washes, and the reader's
+  accent glow at volume 4's yellow, which is the lightest background here.
+- **`--accent` is for backgrounds and borders; `--accent-ink` is for anything a
+  reader has to make out.** Two of the four cover colours are light (volume 3's
+  green is 2.00:1 on paper, volume 4's yellow 1.20:1), so using `--accent` as a
+  text or state colour makes it vanish on those volumes. `--accent-ink` is
+  declared on `*`, not `:root`, because a `var()` inside a custom property is
+  substituted where it is *declared* — on `:root` it would freeze at volume 1's
+  pink for the whole site. Don't "tidy" it up to `:root`.
+- **The greyscale and negative settings filter `.a11yFilterable`, a wrapper
+  around the top bar, main and footer — not `<html>`.** A filtered element
+  becomes the containing block for its `position: fixed` descendants, so a
+  filter higher up would un-fix the audio player and the accessibility button.
+  Everything fixed stays outside that wrapper. An earlier version used
+  `backdrop-filter` on a transparent overlay, which needs no wrapper and is
+  tidier; it was abandoned because Firefox renders it as nothing at all under
+  software rendering, and a colour setting that silently does nothing is worse
+  than no setting.
+- **High contrast is a token override, not a CSS filter.** No filter can create
+  contrast. It works by redefining the tokens in `global.css`, which is also
+  why it costs about fifteen lines.
+- **OpenDyslexic is self-hosted in `public/fonts/` and committed**, like Source
+  Sans 3. The published webfont build of it is Latin-only and therefore useless
+  here; the two files are subsets cut from the upstream font, which does carry
+  the full modern Greek alphabet. Its licence is `OFL-OpenDyslexic.txt`.
+- **Bionic-style bolding of word stems was asked for and deliberately not
+  built.** The peer-reviewed evidence does not support it, splitting every word
+  into two elements harms screen readers and braille displays, and doing it
+  site-wide would mean rewriting the text nodes React owns on every re-render.
+  Text spacing — the WCAG 1.4.12 values — stands in its place. Don't add it
+  without revisiting all three of those.
 
 ## Conventions
 
@@ -93,6 +131,10 @@ Without it the site runs but every magazine page is a broken image.
   always have identical key structures.
 - **Every animation needs a `prefers-reduced-motion` path.** Use the
   `usePrefersReducedMotion` hook and render the finished state.
+- **Anything new has to clear WCAG 2.2 AA before it ships**: 4.5:1 for text,
+  3:1 for the border of anything operable and for any state you can see, a
+  visible focus ring, a 24×24 target, a label on every control, and real text
+  rather than an `aria-label` on an element with no role.
 - **Pure logic lives in its own file with tests** — see `pagination.ts`,
   `paths.ts`. Components stay thin enough to read.
 - Keep `docs/ARCHITECTURE.md` current when files are added or moved.
@@ -146,8 +188,8 @@ understand what it is for and why it is the way it is.
 
 - Copy in both JSON files is placeholder, marked `PLACEHOLDER` / `ΠΡΟΣΩΡΙΝΟ`.
 - `src/components/Logo.tsx` draws a stand-in mark; there is no real logo yet.
-- Volume 4 does not exist. Dropping `QUALIA 4.pdf` into `assets/magazine_vols/`
-  and running `npm run pages` publishes it — no code change needed.
+- All four volumes are published. A fifth needs its PDF in
+  `assets/magazine_vols/`, an entry in `VOLUME_META`, and `npm run pages`.
 - Volume years in `src/data/volumes.ts` were guessed and need confirming.
 - Volume 3 has no voiceover recordings. The audio library shows it with a
   "nothing yet" message; adding recordings means filling in `3: []` in
