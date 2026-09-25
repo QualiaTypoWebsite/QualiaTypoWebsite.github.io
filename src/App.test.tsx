@@ -48,14 +48,42 @@ describe('the homepage', () => {
   it('mounts in Greek by default', async () => {
     renderAt('/');
     expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('Qualia Typo.');
-    expect(screen.getByText('Ξεκινήστε το 1ο περιοδικό')).toBeInTheDocument();
+    expect(screen.getByText('Ξεκινήστε το 1ο τεύχος')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('el');
   });
 
   it('mounts in English under /en', async () => {
     renderAt('/en');
-    expect(await screen.findByText('Start reading vol. 1')).toBeInTheDocument();
+    expect(await screen.findByText('Start reading issue 1')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');
+  });
+
+  it('lists the places to pick up a printed copy as a real list', async () => {
+    renderAt('/en');
+    // Each venue used to be its own paragraph starting with a 📍 emoji, which
+    // a screen reader reads aloud as "round pushpin" twenty times over. It is
+    // a list now, and the pin is a decorative, aria-hidden icon.
+    const intro = await screen.findByText("You'll find it free of charge at the following places in Athens:");
+    const list = intro.nextElementSibling as HTMLElement;
+    expect(list).toHaveRole('list');
+    const venues = within(list).getAllByRole('listitem');
+    expect(venues).toHaveLength(20);
+    expect(venues[0]).toHaveTextContent('Vivliostatis Café');
+    expect(venues[19]).toHaveTextContent('Gefyra Social Centre');
+    expect(list.textContent).not.toContain('📍');
+  });
+
+  it.each([
+    ['/', '«Πού είναι η τέχνη;»'],
+    ['/en', '“Where is art?”'],
+  ])('shows the **marked** phrases in bold, never the asterisks (%s)', async (path, title) => {
+    renderAt(path);
+    // The phrase is found as the text of its own <b>, which is only true if
+    // the markers were turned into an element rather than printed.
+    const phrase = await screen.findByText(title);
+    expect(phrase.tagName).toBe('B');
+    expect(document.querySelectorAll('main b')).toHaveLength(14);
+    expect(document.querySelector('main')!.textContent).not.toContain('**');
   });
 
   it('offers the other language, pointing at the mirrored path', async () => {
@@ -78,7 +106,7 @@ describe('the homepage', () => {
 describe('the library', () => {
   it('lists published volumes with a download link', async () => {
     renderAt('/en/library');
-    expect(await screen.findByRole('heading', { name: 'Every volume' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Every issue' })).toBeInTheDocument();
     const downloads = await screen.findAllByRole('link', { name: 'Download PDF' });
     expect(downloads).toHaveLength(3);
     expect(downloads[0]).toHaveAttribute('href', '/magazines/vol-1/qualia-typo-vol-1.pdf');
@@ -103,7 +131,7 @@ describe('the reader', () => {
 
   it('explains itself when the volume does not exist', async () => {
     renderAt('/en/read/4');
-    expect(await screen.findByText("That volume isn't available yet.")).toBeInTheDocument();
+    expect(await screen.findByText("That issue isn't available yet.")).toBeInTheDocument();
   });
 });
 
@@ -169,7 +197,7 @@ describe('the audio library', () => {
   it('says so when a volume has nothing recorded', async () => {
     renderAt('/en/audio');
     await openVolume(3);
-    expect(await screen.findByText('No recordings yet for this volume.')).toBeInTheDocument();
+    expect(await screen.findByText('No recordings yet for this issue.')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Play from the start' })).not.toBeInTheDocument();
   });
 
@@ -252,7 +280,7 @@ describe('the audio library', () => {
     await screen.findByRole('complementary', { name: 'Audio player' });
 
     await user.click(screen.getByRole('link', { name: 'Back to the library' }));
-    expect(await screen.findByRole('heading', { name: 'Every volume' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Every issue' })).toBeInTheDocument();
 
     const player = screen.getByRole('complementary', { name: 'Audio player' });
     expect(within(player).getByText('vol1-part1')).toBeInTheDocument();
@@ -293,19 +321,19 @@ describe('accessibility', () => {
 
   it('gives every route its own document title', async () => {
     renderAt('/en/library');
-    await screen.findByRole('heading', { name: 'Every volume' });
+    await screen.findByRole('heading', { name: 'Every issue' });
     expect(document.title).toBe('Library · Qualia Typo');
   });
 
   it('names the volume in the reader title, in the right language', async () => {
     renderAt('/read/2');
     await screen.findByText('Σελίδα 1 από 70');
-    expect(document.title).toBe('Περιοδικό 2 · Qualia Typo');
+    expect(document.title).toBe('Τεύχος 2 · Qualia Typo');
   });
 
   it('announces the new page after navigating, but not on arrival', async () => {
     renderAt('/en/library');
-    await screen.findByRole('heading', { name: 'Every volume' });
+    await screen.findByRole('heading', { name: 'Every issue' });
     const status = screen.getByRole('status');
     // Arriving is already narrated by the browser reading the title.
     expect(status).toHaveTextContent('');
@@ -319,7 +347,7 @@ describe('accessibility', () => {
   it('gives the reader an h1, which it did not have at all', async () => {
     renderAt('/en/read/2');
     expect(await screen.findByRole('heading', { level: 1 }))
-      .toHaveTextContent('Qualia Typo — volume 2');
+      .toHaveTextContent('Qualia Typo — issue 2');
   });
 
   it('marks the language switcher as being written in the language it leads to', async () => {

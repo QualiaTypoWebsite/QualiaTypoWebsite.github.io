@@ -6,7 +6,13 @@
  *  - The hero, which fills the first screen: the typewriter title and its two
  *    buttons on the left, the 2x2 grid of covers on the right.
  *  - Two scroll sections below it — About the project and About us — each
- *    with its own pastel wash and each revealed as you scroll to it.
+ *    with its own pastel wash and each revealed as you scroll to it. About
+ *    the project ends with the places a printed copy can be picked up
+ *    (VenueList) and the funding acknowledgement.
+ *
+ * The prose paragraphs go through RichText, so a phrase wrapped in **double
+ * asterisks** in the i18n files is shown in bold (see src/i18n/emphasis.ts).
+ * The venue names do not: they are names, not prose.
  *
  * The section ids ("about", "group") are what two of the top bar's links point
  * at, so renaming one means updating TopBar.tsx too. The bar's third link,
@@ -17,8 +23,10 @@ import { useLocation } from 'react-router-dom';
 import styles from './Home.module.css';
 import { ButtonLink } from '../components/Button';
 import { CoverGrid } from '../components/CoverGrid';
+import { RichText } from '../components/RichText';
 import { SectionReveal } from '../components/SectionReveal';
 import { TypewriterTitle } from '../components/TypewriterTitle';
+import { VenueList } from '../components/VenueList';
 import { useVolumes } from '../data/useVolumes';
 import { useLang } from '../i18n/LanguageProvider';
 
@@ -58,7 +66,7 @@ export function Home() {
             </ButtonLink>
           </div>
 
-          <p className={styles.intro}>{t('home.intro')}</p>
+          <p className={styles.intro}><RichText text={t('home.intro')} /></p>
 
           <a className={styles.scrollHint} href="#about">
             {t('home.scrollHint')} <span aria-hidden="true">↓</span>
@@ -77,7 +85,12 @@ export function Home() {
             <h2 className={styles.sectionTitle}>{t('about.title')}</h2>
           </div>
           <div className={styles.prose}>
-            {tList('about.body').map((p) => <p key={p}>{p}</p>)}
+            {tList('about.body').map((p) => <p key={p}><RichText text={p} /></p>)}
+            {/* Where to pick up a printed copy: the sentence introducing the
+                list, the list itself, then the funding acknowledgement. */}
+            <p><RichText text={t('about.venuesIntro')} /></p>
+            <VenueList venues={tList('about.venues')} />
+            <p><RichText text={t('about.funding')} /></p>
           </div>
         </div>
       </SectionReveal>
@@ -89,7 +102,7 @@ export function Home() {
             <h2 className={styles.sectionTitle}>{t('group.title')}</h2>
           </div>
           <div className={styles.prose}>
-            {tList('group.body').map((p) => <p key={p}>{p}</p>)}
+            {tList('group.body').map((p) => <p key={p}><RichText text={p} /></p>)}
           </div>
         </div>
       </SectionReveal>

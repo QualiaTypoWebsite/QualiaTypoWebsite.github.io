@@ -46,14 +46,33 @@ All copy lives in two files, and nothing else needs touching:
 - `src/i18n/el.json` — Greek
 - `src/i18n/en.json` — English
 
-The two files must have the same keys. Strings currently marked `PLACEHOLDER` /
-`ΠΡΟΣΩΡΙΝΟ` are the ones still awaiting real copy.
+The two files must have the same keys. The Greek file is written first and is
+the source of truth for wording; the English one is its translation. In the
+English copy a numbered magazine is an **issue** ("Issue 2"), matching the
+Greek "Τεύχος".
+
+`src/App.test.tsx` checks some of these strings word for word, so changing
+the text of a heading, a button or the reader's title can fail a test. That
+is expected: update the test to the new wording, not the other way round.
+
+**To make words bold**, wrap them in double asterisks, as in Markdown:
+`"Το **Qualia Typo** είναι…"`. Mark the same phrase in the English file too.
+This works in the homepage's intro, About and "Who we are" paragraphs; in a
+button or a title the asterisks would show as typed. A `**` left without its
+closing pair also shows as typed, so a typo is visible rather than turning
+the rest of the paragraph bold.
+
+**The places to pick up a printed copy** — the list at the end of the
+homepage's About section — are `about.venues` in both files. Each entry is
+just the name: the pin in front of it is drawn by the site
+(`src/components/VenueList.tsx`), so don't type a 📍 in. To add a venue, add
+it to both files at the same position, in Greek and in English.
 
 ## The audio recordings
 
 Volumes 1, 2 and 4 have been recorded as voiceovers — one file per article or
 spread — and the site presents them at **`/audio`** (`/en/audio`), reached from
-the button under "Every volume" on the library page. Volume 3 has not been
+the button under "Every issue" on the library page. Volume 3 has not been
 recorded; it still gets a section, which says so when opened.
 
 **The recordings themselves are not in this repo.** They are far too large to

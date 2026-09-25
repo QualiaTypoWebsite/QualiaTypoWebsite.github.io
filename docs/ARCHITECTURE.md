@@ -112,6 +112,7 @@ This is the folder to understand if you want to change any text on the site.
 |------|--------------|
 | `el.json` / `en.json` | **Every word on the website.** Edit these to change copy. They must always have matching keys. |
 | `paths.ts` | Pure functions deciding language from the URL. `/library` is Greek, `/en/library` is English. Also builds the "same page, other language" link the flag button uses. |
+| `emphasis.ts` | Splits a string with `**bold**` markers into plain and bold pieces. Pure and tested; the only formatting the i18n files are allowed. An unclosed `**` is shown as typed rather than bolding the rest of the paragraph. |
 | `translate.ts` | Looks up a key like `library.read` in a JSON file and fills in `{{count}}`-style placeholders. A missing key returns the key itself, so a half-finished translation shows `library.read` on screen instead of a blank space. |
 | `LanguageProvider.tsx` | Wraps the app and hands every component a `t()` function. Also sets `<html lang>` and remembers the choice in `localStorage`. |
 
@@ -175,6 +176,8 @@ of the way and it completes; release earlier and it springs back.
 | `TypewriterTitle.tsx` | The homepage title that types itself. |
 | `useTypewriter.ts` | The timing behind it: type each letter, hold with a blinking cursor, then drop the full stop. Each keystroke is slightly irregular on purpose — perfectly even typing reads as a machine. |
 | `CoverGrid.tsx` | The 2×2 grid of covers on the homepage, with the hover lift. Shows "coming soon" for volumes that do not exist yet. |
+| `RichText.tsx` | Draws a translated string with its `**bold**` phrases as `<b>`, in full ink at weight 600. Used for the homepage prose only. |
+| `VenueList.tsx` | The places in Athens where a printed copy can be picked up, at the end of the homepage's About section: a real `<ul>` flowing into two columns, each name behind a hand-drawn, aria-hidden pin. The names are `about.venues` in the i18n files, since the English ones are transliterated. |
 | `SocialLinks.tsx` | The round Facebook / Instagram / Linktree / email buttons in the footer. The icons are hand-drawn inline SVG — four glyphs did not justify an icon package. |
 | `Button.tsx` | One button style in three variants, as a `<button>`, a `<Link>`, or an `<a>`. |
 | `SectionReveal.tsx` | Fades a section in the first time you scroll to it. |

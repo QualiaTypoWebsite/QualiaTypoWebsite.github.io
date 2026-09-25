@@ -3,13 +3,13 @@
   "meta": {
     "title": "Qualia Typo",
     "tagline": "The art magazine of the Qualia Art Youth Group",
-    "description": "Read and download every volume of Qualia Typo."
+    "description": "Read and download every issue of Qualia Typo."
   },
   "titles": {
     "home": "Qualia Typo — The art magazine of the Qualia Art Youth Group",
     "library": "Library · Qualia Typo",
     "audio": "Audio library · Qualia Typo",
-    "reader": "Volume {{n}} · Qualia Typo",
+    "reader": "Issue {{n}} · Qualia Typo",
     "notFound": "Page not found · Qualia Typo"
   },
   "a11y": {
@@ -17,9 +17,9 @@
     "pageChanged": "Navigated to {{title}}",
     "mainNav": "Main navigation",
     "readerToolbar": "Reading tools",
-    "readerTitle": "Qualia Typo — volume {{n}}",
+    "readerTitle": "Qualia Typo — issue {{n}}",
     "thumbnailStrip": "Page thumbnails",
-    "comingSoonTile": "Volume {{n}} — coming soon",
+    "comingSoonTile": "Issue {{n}} — coming soon",
     "panel": {
       "open": "Accessibility tools",
       "close": "Close",
@@ -57,50 +57,73 @@
     "menu": "Menu"
   },
   "home": {
-    "startReading": "Start reading vol. 1",
+    "startReading": "Start reading issue 1",
     "browseLibrary": "Browse the library",
-    "intro": "Qualia Typo is an independent art magazine made entirely by young volunteers. Each volume gathers writing, illustration and experimental design around a single theme.",
-    "coversLabel": "Qualia Typo volumes",
+    "intro": "**Qualia Typo** is a participatory publishing project by the Qualia Art Youth Group that explores Athens through the experiences, observations and creative practices of the young people who live and are active in the city. Through regular meetings, participatory processes and an introduction to art history and creative methods, the group developed a shared line of inquiry: what is our place in this city?",
+    "coversLabel": "Qualia Typo issues",
     "scrollHint": "Scroll to read more"
   },
   "about": {
-    "eyebrow": "The project",
+    "eyebrow": "The idea",
     "title": "About Qualia Typo",
     "body": [
-      "PLACEHOLDER: Qualia Typo began as a small idea between friends who wanted somewhere to put their work — somewhere without algorithms and without deadlines.",
-      "PLACEHOLDER: Every issue is built around a theme chosen collectively. Members contribute writing, photography, collage and illustration, and the whole group edits it together.",
-      "PLACEHOLDER: The magazine is free in digital form. Read it online, or download it and print your own copy."
-    ]
+      "The four issues approach different sides of urban experience. **Qualia Typo #1**, built around the question **“Where is art?”**, looks for art within everyday life; **Qualia Typo #2**, otherwise known as **“on waiting”**, invites us to listen to the pauses and the in-between time of the city; **Qualia Typo #3**, **“on accessibility and visibility”**, asks who has access to, takes part in and becomes visible in its cultural and social life; and the last, **Qualia Typo #4**, synonymous with **“connection”**, explores what binds us to the places we live in and experience.",
+      "Beyond making the magazines, **Qualia Typo** was a process of active participation and collective learning. The people who took part shaped the course of the project together, made decisions that influenced how it developed, and built skills in shared responsibility, collaboration and the coexistence of different perspectives. Through this process, they redefined their relationship with the urban space of Athens, with inclusion and accessibility, and with effective intervention in the things that make our city feel unhomely.",
+      "Qualia Typo is a coffee table magazine, designed to be discovered in your own time. It is not a free press publication; it is an open invitation to pause for a while, leaf through its pages and wonder."
+    ],
+    "venuesIntro": "You'll find it free of charge at the following places in Athens:",
+    "venues": [
+      "Vivliostatis Café",
+      "We Need Books",
+      "Best Buddies Greece",
+      "Kaisariani Cultural Centre",
+      "Free Thinking Zone",
+      "The Pangrati Project",
+      "Inter Alia",
+      "Conseederate",
+      "Booking Hill",
+      "Vryssaki",
+      "to magazi",
+      "Schima – Therapy & Art",
+      "EDRA Social Cooperative",
+      "Air Castle Expression Space",
+      "Enastron",
+      "Zatopek",
+      "Hearts and Crafts Studio",
+      "Art Hub Athens",
+      "Hellenic Photographic Society",
+      "Gefyra Social Centre"
+    ],
+    "funding": "Our work takes place as part of the **“Qualia Typo”** project, co-funded by the **European Union's European Solidarity Corps** and by the **Youth and Lifelong Learning Foundation (INEDIVIM)**."
   },
   "group": {
     "eyebrow": "The group",
     "title": "About us",
     "body": [
-      "PLACEHOLDER: The Qualia Art Youth Group is a voluntary collective of young people working across visual art, writing and design.",
-      "PLACEHOLDER: We run horizontally and without funding. If you would like to take part in a future issue, get in touch."
+      "The **Qualia Art Youth Group** is an informal youth group with an active network in Athens and Karditsa. It uses art education, art history and non-formal education as tools for learning, expression and active participation. It designs and carries out local and European activities that open up spaces for experimentation, collaboration and the exchange of different lived experiences, with a particular focus on the participation of young people with fewer opportunities."
     ]
   },
   "library": {
     "eyebrow": "Library",
-    "title": "Every volume",
+    "title": "Every issue",
     "subtitle": "Read online, or download the PDF.",
     "read": "Read",
     "download": "Download PDF",
     "pages": "{{count}} pages",
     "comingSoon": "Coming soon",
-    "comingSoonNote": "Volume 4 is in the works.",
-    "volumeLabel": "Volume {{n}}",
+    "comingSoonNote": "Issue 4 is in the works.",
+    "volumeLabel": "Issue {{n}}",
     "audioLibrary": "Audio library"
   },
   "audio": {
     "eyebrow": "Audio library",
     "title": "Listen to the magazine",
-    "subtitle": "The recordings for each volume, in the order they are read.",
+    "subtitle": "The recordings for each issue, in the order they are read.",
     "backToLibrary": "Back to the library",
     "playFromStart": "Play from the start",
     "trackCount": "{{count}} recordings",
     "none": "No recordings",
-    "noRecordings": "No recordings yet for this volume.",
+    "noRecordings": "No recordings yet for this issue.",
     "playTrack": "Play {{name}}",
     "pauseTrack": "Pause {{name}}",
     "player": {
@@ -129,8 +152,8 @@
     "exitFullscreen": "Exit fullscreen",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
-    "loading": "Loading volume…",
-    "notFound": "That volume isn't available yet.",
+    "loading": "Loading magazine…",
+    "notFound": "That issue isn't available yet.",
     "hint": "Use the arrow keys, or drag a page."
   },
   "social": {

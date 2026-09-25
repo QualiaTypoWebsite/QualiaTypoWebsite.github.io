@@ -1,0 +1,15 @@
+/*
+  The bold phrases in the homepage prose.
+
+  The prose around them is --ink-soft, so bold alone would be a darker grey.
+  Taking the bold words up to full --ink as well is what makes them "pop",
+  and it only raises their contrast (--ink is the site's darkest text colour).
+  Both are tokens, so the high-contrast setting still recolours them.
+
+  600 rather than 700: Inter is loaded at both, and at body size 700 on
+  Greek text starts to clot; 600 stands out without shouting.
+*/
+.bold {
+  font-weight: 600;
+  color: var(--ink);
+}

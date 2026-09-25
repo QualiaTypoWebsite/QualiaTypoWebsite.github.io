@@ -28,7 +28,7 @@ styling is hand-written on purpose, for control over the typography.
 ```bash
 npm run pages   # render the PDFs into page images — run once after cloning
 npm run dev     # dev server on http://localhost:5173
-npm test        # vitest, 130 tests
+npm test        # vitest, 140 tests
 npm run build   # tsc + vite build into dist/
 npm run check:audio  # check every voiceover URL still resolves (needs network)
 ```
@@ -129,6 +129,10 @@ Without it the site runs but every magazine page is a broken image.
 - **All user-facing text goes in `src/i18n/el.json` and `src/i18n/en.json`.**
   Never hard-code a Greek or English string in a component. The two files must
   always have identical key structures.
+- **Bold in the copy is written `**like this**`**, and the same phrases are
+  marked in both languages. Only strings drawn through `RichText` (the homepage
+  prose) turn the markers into bold; anywhere else they would appear as typed,
+  so don't use them in titles, buttons or aria-labels. No HTML in the JSON.
 - **Every animation needs a `prefers-reduced-motion` path.** Use the
   `usePrefersReducedMotion` hook and render the finished state.
 - **Anything new has to clear WCAG 2.2 AA before it ships**: 4.5:1 for text,
@@ -186,7 +190,10 @@ understand what it is for and why it is the way it is.
 
 ## Still outstanding
 
-- Copy in both JSON files is placeholder, marked `PLACEHOLDER` / `ΠΡΟΣΩΡΙΝΟ`.
+- The homepage intro, About and "Who we are" copy is final (Greek written by
+  the owner, English translated from it). The `_placeholder` note at the top of
+  each JSON file is still there; remove it from both once the rest of the copy
+  has been signed off.
 - `src/components/Logo.tsx` draws a stand-in mark; there is no real logo yet.
 - All four volumes are published. A fifth needs its PDF in
   `assets/magazine_vols/`, an entry in `VOLUME_META`, and `npm run pages`.
