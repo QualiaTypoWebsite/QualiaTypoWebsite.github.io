@@ -302,7 +302,7 @@ the buttons, focus rings and glow pick it up automatically.
 light: volume 3's green measures 2.00:1 against the paper and volume 4's yellow
 1.20:1, both far below the 4.5:1 that text needs. So there are two tokens.
 `--accent` is for backgrounds, borders and glows; **`--accent-ink` is for
-anything a reader has to make out** — the "ΤΟΜΟΣ 4" labels, the active toolbar
+anything a reader has to make out** — the "ΠΕΡΙΟΔΙΚΟ 4" labels, the active toolbar
 toggle, the current thumbnail. It is the same colour mixed 40% into ink, which
 is the largest share that still clears 4.5:1 for every volume.
 

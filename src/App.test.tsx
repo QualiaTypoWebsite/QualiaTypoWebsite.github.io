@@ -48,7 +48,7 @@ describe('the homepage', () => {
   it('mounts in Greek by default', async () => {
     renderAt('/');
     expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('Qualia Typo.');
-    expect(screen.getByText('Ξεκινήστε τον τόμο 1')).toBeInTheDocument();
+    expect(screen.getByText('Ξεκινήστε το 1ο περιοδικό')).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('el');
   });
 
@@ -66,12 +66,12 @@ describe('the homepage', () => {
 
   it('shows every published cover plus a placeholder for volume 4', async () => {
     renderAt('/');
-    const grid = await screen.findByRole('list', { name: 'Τόμοι του Qualia Typo' });
+    const grid = await screen.findByRole('list', { name: 'Περιοδικά του Qualia Typo' });
     expect(await within(grid).findAllByRole('img')).toHaveLength(3);
     // The tile's volume number used to be an aria-label on a bare <div>, which
     // assistive technology ignores; it is real (visually hidden) text now, so
     // this looks it up the way a screen reader would find it.
-    expect(within(grid).getByText(/Τόμος 4 — σύντομα/)).toBeInTheDocument();
+    expect(within(grid).getByText(/Περιοδικό 4 — σύντομα/)).toBeInTheDocument();
   });
 });
 
@@ -300,7 +300,7 @@ describe('accessibility', () => {
   it('names the volume in the reader title, in the right language', async () => {
     renderAt('/read/2');
     await screen.findByText('Σελίδα 1 από 70');
-    expect(document.title).toBe('Τόμος 2 · Qualia Typo');
+    expect(document.title).toBe('Περιοδικό 2 · Qualia Typo');
   });
 
   it('announces the new page after navigating, but not on arrival', async () => {
