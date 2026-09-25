@@ -220,6 +220,3 @@ understand what it is for and why it is the way it is.
   "nothing yet" message; adding recordings means filling in `3: []` in
   `src/data/recordings.ts` and uploading the files to `qt3/` in the bucket.
 - The recording aliases are provisional — see the decision above.
-- **The Facebook, Instagram and Linktree URLs in `src/data/socials.ts` are
-  placeholders** ending in `PLACEHOLDER` and lead nowhere. They need the
-  group's real profile URLs.

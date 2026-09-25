@@ -10,11 +10,12 @@
  * footer's volume dots have made way for them; SocialLinks.module.css tints
  * them well back into the paper so four coloured circles never shout.
  *
- * ⚠ The Facebook, Instagram and Linktree URLs below are PLACEHOLDERS and lead
- * nowhere. Replace them with the group's real profiles — see README.md,
- * "The social links".
+ * These are the group's real profiles. The Facebook one is the page's own
+ * address rather than a share link (facebook.com/share/…), which only
+ * redirects here and depends on Facebook keeping that redirect alive.
+ * App.test.tsx asserts every URL, so a change here needs the same change there.
  */
-export const CONTACT_EMAIL = 'qualiatypowebsite@gmail.com';
+export const CONTACT_EMAIL = 'qualiaartyouthgroup@gmail.com';
 
 /** Matches the icon keys in SocialLinks.tsx and the labels in the i18n files. */
 export type SocialId = 'facebook' | 'instagram' | 'linktree' | 'email';
@@ -27,9 +28,9 @@ export type Social = {
 };
 
 export const SOCIALS: Social[] = [
-  { id: 'instagram', href: 'https://www.instagram.com/PLACEHOLDER/', accent: 'var(--vol-1)' },
-  { id: 'facebook', href: 'https://www.facebook.com/PLACEHOLDER', accent: 'var(--vol-2)' },
-  { id: 'linktree', href: 'https://linktr.ee/PLACEHOLDER', accent: 'var(--vol-3)' },
+  { id: 'instagram', href: 'https://www.instagram.com/qualiaart', accent: 'var(--vol-1)' },
+  { id: 'facebook', href: 'https://www.facebook.com/p/Qualia-Art-61575113092569/', accent: 'var(--vol-2)' },
+  { id: 'linktree', href: 'https://linktr.ee/qualiaartyouthgroup', accent: 'var(--vol-3)' },
   { id: 'email', href: `mailto:${CONTACT_EMAIL}`, accent: 'var(--vol-4)' },
 ];
 

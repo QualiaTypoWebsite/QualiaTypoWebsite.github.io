@@ -156,10 +156,10 @@ describe('the social buttons in the footer', () => {
     renderAt('/en');
 
     const links = {
-      'Qualia Typo on Instagram': 'https://www.instagram.com/PLACEHOLDER/',
-      'Qualia Typo on Facebook': 'https://www.facebook.com/PLACEHOLDER',
-      'All our links on Linktree': 'https://linktr.ee/PLACEHOLDER',
-      'Email us': 'mailto:qualiatypowebsite@gmail.com',
+      'Qualia Typo on Instagram': 'https://www.instagram.com/qualiaart',
+      'Qualia Typo on Facebook': 'https://www.facebook.com/p/Qualia-Art-61575113092569/',
+      'All our links on Linktree': 'https://linktr.ee/qualiaartyouthgroup',
+      'Email us': 'mailto:qualiaartyouthgroup@gmail.com',
     };
 
     for (const [name, href] of Object.entries(links)) {

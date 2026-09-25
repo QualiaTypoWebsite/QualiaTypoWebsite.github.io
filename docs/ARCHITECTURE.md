@@ -130,7 +130,7 @@ URL "/en/library"
 
 | File | What it does |
 |------|--------------|
-| `socials.ts` | Where the footer's social buttons point, and which volume colour each one wears. **The Facebook, Instagram and Linktree URLs are placeholders** — see README.md. |
+| `socials.ts` | Where the footer's social buttons point — the group's Instagram, Facebook, Linktree and email — and which volume colour each one wears. |
 | `recordings.ts` | **Every voiceover recording**: which file belongs to which volume, in what order, and under what name on the site. Also where the recordings are hosted. This is the file to edit to rename or repoint one. |
 | `volumes.ts` | The accent colour and year for each volume, plus the functions that build image and PDF URLs. **Add volume 5 here** if there ever is one. |
 | `useVolumes.ts` | Fetches the generated `index.json` at runtime and merges it with the above. This is why publishing volume 4 needs no code change: the site asks at load time which volumes actually exist. |

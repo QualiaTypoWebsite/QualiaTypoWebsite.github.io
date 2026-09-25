@@ -118,23 +118,22 @@ the bucket have parted company. `npm test` catches a different mistake: it reads
 the `file-order.txt` files back and fails if `recordings.ts` has drifted from
 them.
 
-## The social links ⚠ placeholders
+## The social links
 
 The footer's four round buttons — Instagram, Facebook, Linktree and email —
-are listed in **`src/data/socials.ts`**. Three of them currently point at
-placeholder URLs and **lead nowhere**:
+are listed in **`src/data/socials.ts`**:
 
-| Button | Current URL | Needs |
-|---|---|---|
-| Instagram | `https://www.instagram.com/PLACEHOLDER/` | the group's real profile |
-| Facebook | `https://www.facebook.com/PLACEHOLDER` | the group's real page |
-| Linktree | `https://linktr.ee/PLACEHOLDER` | the group's real Linktree |
-| Email | `mailto:qualiatypowebsite@gmail.com` | ✅ already correct |
+| Button | URL |
+|---|---|
+| Instagram | `https://www.instagram.com/qualiaart` |
+| Facebook | `https://www.facebook.com/p/Qualia-Art-61575113092569/` |
+| Linktree | `https://linktr.ee/qualiaartyouthgroup` |
+| Email | `mailto:qualiaartyouthgroup@gmail.com` |
 
-Replace the three `PLACEHOLDER` URLs in `src/data/socials.ts` before the next
-deploy. Nothing else needs touching — the button, its colour and its label are
-already wired up. `src/App.test.tsx` asserts the URLs, so it will fail and
-remind you to update it there too.
+To change one, edit its URL in `src/data/socials.ts` (the email address is
+`CONTACT_EMAIL` at the top). Nothing else needs touching — the button, its
+colour and its label are already wired up. `src/App.test.tsx` asserts the
+URLs, so it will fail and remind you to update it there too.
 
 Adding a fifth network means adding an entry to `SOCIALS`, an icon to
 `ICONS` in `src/components/SocialLinks.tsx`, and a label to both i18n files.
