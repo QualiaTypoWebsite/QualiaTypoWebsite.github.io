@@ -6,8 +6,10 @@
  * nothing has been recorded yet, which is more use to a visitor than a gap
  * where a volume should be.
  *
- * Each section sets --accent to its own cover colour, so the rows are tinted
- * by the magazines themselves — the same rule the library rows follow.
+ * Each section sets --accent to its own cover colour but does not paint with
+ * it — the same rule the library rows follow: neutral on screen, with the
+ * volume's colour available to any element inside that wants it.
+ * See AudioLibrary.module.css.
  *
  * The page only ever asks the player to play something. Everything about what
  * is playing, and the player card itself, lives in src/audio/ and survives

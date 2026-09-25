@@ -28,7 +28,7 @@ styling is hand-written on purpose, for control over the typography.
 ```bash
 npm run pages   # render the PDFs into page images — run once after cloning
 npm run dev     # dev server on http://localhost:5173
-npm test        # vitest, 140 tests
+npm test        # vitest, 145 tests
 npm run build   # tsc + vite build into dist/
 npm run check:audio  # check every voiceover URL still resolves (needs network)
 ```
@@ -88,9 +88,27 @@ Without it the site runs but every magazine page is a broken image.
   reasons; what keeps this one honest is that the site conforms without it.
   Don't add a claim anywhere that the button makes the site accessible.
 - **Every colour in `global.css` carries its measured contrast ratio in a
-  comment.** If you change one, re-measure it against all five surfaces the
-  site paints — paper, sunk paper, the two homepage washes, and the reader's
-  accent glow at volume 4's yellow, which is the lightest background here.
+  comment.** If you change one, re-measure it against all three surfaces the
+  site paints — paper, sunk paper, and the reader's accent glow at volume 4's
+  yellow. (There used to be five; the two homepage washes were removed.)
+- **The homepage, the library and the audio library carry no colour of their
+  own**, by the owner's explicit choice: the homepage sections have no pastel
+  washes, and the library rows and audio sections are plain paper with a
+  `--rule` border and a neutral `--paper-sunk` hover, with no per-volume tint.
+  The covers are the only colour there. Volume colours remain on the reader,
+  the audio player card and the four social buttons — don't strip those, and
+  don't reinstate the tints (`src/routes/colourless.test.ts` fails if one of
+  the three stylesheets paints with a volume colour or pastel).
+- **Colourless is not the same as colour removed — the owner wants the colours
+  kept available.** The library rows and audio sections still *set* `--accent`
+  to their volume's colour inline (`App.test.tsx` checks this); nothing paints
+  with it, but any element inside a row can pick it up with one line of CSS.
+  `--vol-1` … `--vol-4`, `--blush`, `--periwinkle`, `VOLUME_META.accent` and
+  `accentFor()` all stay, used or not. Don't delete them as dead code. The
+  default `--accent` in `global.css` is `var(--paper)`, so anything without a
+  volume of its own blends into the page. At that default `--accent-ink`
+  measures only 4.48:1, so never use `--accent-ink` for text outside a volume;
+  use `--ink-faint` (4.83:1) or darker.
 - **`--accent` is for backgrounds and borders; `--accent-ink` is for anything a
   reader has to make out.** Two of the four cover colours are light (volume 3's
   green is 2.00:1 on paper, volume 4's yellow 1.20:1), so using `--accent` as a

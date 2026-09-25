@@ -165,8 +165,8 @@ purely to keep that honest:
 
 | Token | For | Measures |
 |---|---|---|
-| `--ink-faint` | the quietest text — footer, eyebrows, hints | 4.74:1 |
-| `--rule-strong` | the border of anything you can operate | 3.22:1 |
+| `--ink-faint` | the quietest text — footer, eyebrows, hints, the library's issue labels | 4.83:1 |
+| `--rule-strong` | the border of anything you can operate | 3.28:1 |
 | `--accent-ink` | a volume's colour when used as **text** | 4.65:1 |
 
 The last one is the subtle one. `--accent` is a magazine cover colour at full
@@ -175,6 +175,35 @@ paper and volume 4's yellow 1.20:1. Backgrounds and borders may use `--accent`
 freely; **anything a reader has to make out uses `--accent-ink`**, which is the
 same colour mixed 40% into ink. It is declared on `*` rather than on `:root`,
 and the comment there explains why — it is a genuine CSS trap.
+
+Volume colours only appear where a page belongs to one volume: the reader, the
+audio player card while it plays that volume, and the social buttons. The
+homepage, the library and the audio library are deliberately colourless —
+plain paper, so the covers are the only colour there — and the default
+`--accent` is the paper colour itself. At that default `--accent-ink` measures
+just under AA (4.48:1), so text that belongs to no volume uses `--ink-faint`
+instead.
+
+### Using the magazine colours
+
+The colours are all still in the code, ready to use — the pages above simply
+don't paint with them:
+
+- **Any one cover colour, anywhere:** `var(--vol-1)` … `var(--vol-4)` in CSS
+  (defined in `src/styles/global.css`).
+- **"This issue's colour", inside a library row or an audio library section:**
+  each row already carries its issue's colour, so `var(--accent)` for a
+  background or border, or `var(--accent-ink)` for text, is all it takes. Use
+  `--accent-ink` for anything people read — volumes 3 and 4 are too light to
+  read as raw text.
+- **The pastel tints:** `var(--blush)`, `var(--periwinkle)`, `var(--celadon)`,
+  `var(--butter)`.
+- **In TypeScript:** `VOLUME_META` and `accentFor(n)` in `src/data/volumes.ts`.
+
+Colouring something on the homepage, library or audio library will fail
+`src/routes/colourless.test.ts` on purpose, as a reminder that those pages were
+made colourless by choice. If it's intended, take that page's stylesheet out of
+the list in that test.
 
 Beyond colour: every route sets its own `<title>` and announces itself on
 navigation, the focus ring is a single ink colour that works on every

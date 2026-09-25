@@ -2,8 +2,10 @@
   The homepage.
 
   The hero is a two-column grid that collapses to one column under 940px.
-  Each scroll section carries a different pastel wash, fading in from the paper
-  colour so the sections read as a gentle sequence rather than as blocks.
+  The scroll sections sit on the plain paper colour, separated only by a thin
+  rule. They used to carry pastel washes (blush for About, periwinkle for
+  About us); those were removed at the owner's request so the covers are the
+  only colour on the page.
 
   scroll-margin-top on .section keeps the sticky top bar from covering a
   heading when you jump to it from the nav.
@@ -75,11 +77,6 @@
 
 .prose { max-width: 62ch; font-size: 1.04rem; color: var(--ink-soft); }
 .prose p:last-child { margin-bottom: 0; }
-
-/* Each section carries a different pastel wash, tinting the paper without
-   ever competing with the covers. */
-.about { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--blush) 42%, var(--paper))); }
-.group { background: linear-gradient(180deg, var(--paper), color-mix(in srgb, var(--periwinkle) 45%, var(--paper))); }
 
 @media (max-width: 940px) {
   .hero { grid-template-columns: 1fr; min-height: 0; gap: 2.5rem; }

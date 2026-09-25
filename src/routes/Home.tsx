@@ -5,8 +5,8 @@
  *
  *  - The hero, which fills the first screen: the typewriter title and its two
  *    buttons on the left, the 2x2 grid of covers on the right.
- *  - Two scroll sections below it — About the project and About us — each
- *    with its own pastel wash and each revealed as you scroll to it. About
+ *  - Two scroll sections below it — About the project and About us — on the
+ *    plain paper colour, each revealed as you scroll to it. About
  *    the project ends with the places a printed copy can be picked up
  *    (VenueList) and the funding acknowledgement.
  *
@@ -78,7 +78,7 @@ export function Home() {
         </div>
       </div>
 
-      <SectionReveal id="about" className={`${styles.section} ${styles.about}`}>
+      <SectionReveal id="about" className={styles.section}>
         <div className={`${styles.sectionInner} shell`}>
           <div>
             <p className="eyebrow">{t('about.eyebrow')}</p>
@@ -95,7 +95,7 @@ export function Home() {
         </div>
       </SectionReveal>
 
-      <SectionReveal id="group" className={`${styles.section} ${styles.group}`}>
+      <SectionReveal id="group" className={styles.section}>
         <div className={`${styles.sectionInner} shell`}>
           <div>
             <p className="eyebrow">{t('group.eyebrow')}</p>

@@ -126,13 +126,6 @@ html[data-a11y-contrast='high'] {
   color-scheme: dark;
 }
 
-/* The pastel washes on the homepage sections are gradients, not tokens, so
-   they have to be flattened by hand. */
-html[data-a11y-contrast='high'] section[id='about'],
-html[data-a11y-contrast='high'] section[id='group'] {
-  background: #000000;
-}
-
 /* The magazine artwork keeps its own colours; it is the content, not chrome. */
 html[data-a11y-contrast='high'] img {
   /* A rim so a dark cover does not bleed into a black page. */

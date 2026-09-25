@@ -15,6 +15,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
+import { VOLUME_META } from './data/volumes';
 
 const INDEX = {
   volumes: [
@@ -110,6 +111,21 @@ describe('the library', () => {
     const downloads = await screen.findAllByRole('link', { name: 'Download PDF' });
     expect(downloads).toHaveLength(3);
     expect(downloads[0]).toHaveAttribute('href', '/magazines/vol-1/qualia-typo-vol-1.pdf');
+  });
+
+  // Each row still carries its volume's cover colour as --accent, even though
+  // nothing on these pages paints with it (the owner asked for them to be
+  // colourless — src/routes/colourless.test.ts checks that side). Setting it
+  // keeps the colour one line of CSS away for any element in the row.
+  it.each(['/en/library', '/en/audio'])('keeps each row\'s volume colour available (%s)', async (path) => {
+    renderAt(path);
+    await screen.findAllByRole('listitem');
+    // Every <li> in main that carries a colour: the rows themselves, not
+    // anything nested inside them.
+    const rows = [...document.querySelectorAll<HTMLElement>('main li')]
+      .filter((li) => li.style.getPropertyValue('--accent') !== '');
+    expect(rows.map((row) => row.style.getPropertyValue('--accent')))
+      .toEqual(VOLUME_META.map((meta) => meta.accent));
   });
 });
 

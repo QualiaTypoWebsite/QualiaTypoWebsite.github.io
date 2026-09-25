@@ -1,9 +1,18 @@
 /*
   The audio library.
 
-  Deliberately the same visual language as Library.module.css — one tinted row
-  per volume, each mixing its own --accent into the paper — so the two pages
-  read as the same shelf seen two ways.
+  Deliberately the same visual language as Library.module.css — one neutral
+  row per volume, paper with a thin --rule border — so the two pages read as
+  the same shelf seen two ways. Like the library, it used to be tinted with
+  each volume's cover colour; that was removed at the owner's request.
+  AudioLibrary.tsx still sets --accent on every section, so var(--accent) and
+  var(--accent-ink) give that volume's colour to anything inside that wants
+  it. Nothing in this file uses them today.
+
+  The hover tint goes on the summary button, not the whole section. With no
+  colour left there is only one neutral tint (--paper-sunk), and it is also
+  what marks a hovered and the current recording; tinting the whole section
+  on hover would hide both of those behind the same colour.
 
   The extra bottom padding is for the player: it is fixed to the bottom-left
   corner, and without the room it would sit on top of the last volume.
@@ -19,11 +28,9 @@
 .section {
   border-radius: 14px;
   overflow: hidden;
-  background: color-mix(in srgb, var(--accent) 6%, var(--paper));
-  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--rule));
-  transition: background 0.3s var(--ease-out);
+  background: var(--paper);
+  border: 1px solid var(--rule);
 }
-.section:hover { background: color-mix(in srgb, var(--accent) 9%, var(--paper)); }
 
 /* The heading exists for the document outline; the button inside it is the control. */
 .summaryHeading { margin: 0; font-size: inherit; font-weight: inherit; letter-spacing: normal; }
@@ -38,7 +45,9 @@
   background: transparent;
   text-align: left;
   cursor: pointer;
+  transition: background 0.3s var(--ease-out);
 }
+.summary:hover { background: var(--paper-sunk); }
 
 .summaryText { flex: 1; min-width: 0; }
 
@@ -48,10 +57,8 @@
   font-size: 0.74rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  /* --accent-ink, not --accent: this is text, and volume 3's green and
-     volume 4's yellow measured 2.87:1 and 1.81:1 here even with the
-     filter that used to stand in for this. */
-  color: var(--accent-ink);
+  /* The same quiet ink as every eyebrow on the site: 4.83:1 worst case. */
+  color: var(--ink-faint);
 }
 
 .volTitle {
@@ -75,7 +82,7 @@
 .panel { overflow: hidden; }
 .panelInner {
   padding: 0 clamp(1.1rem, 2.5vw, 1.8rem) clamp(1.1rem, 2.5vw, 1.6rem);
-  border-top: 1px solid color-mix(in srgb, var(--accent) 16%, var(--rule));
+  border-top: 1px solid var(--rule);
   padding-top: clamp(1rem, 2vw, 1.3rem);
 }
 
@@ -97,10 +104,12 @@
   border-radius: 10px;
   transition: background 0.2s var(--ease-out);
 }
-.track:hover { background: color-mix(in srgb, var(--accent) 12%, var(--paper)); }
+.track:hover { background: var(--paper-sunk); }
 
-/* The recording the player is on, whether it is playing or paused. */
-.trackCurrent { background: color-mix(in srgb, var(--accent) 16%, var(--paper)); }
+/* The recording the player is on, whether it is playing or paused. The tint
+   is the same as hover, so it is not what carries the state: the filled round
+   button and the sound-wave icon beside the name do that. */
+.trackCurrent { background: var(--paper-sunk); }
 
 .trackButton {
   flex: none;
@@ -137,7 +146,7 @@
   overflow-wrap: anywhere;
 }
 
-.wave { flex: none; color: var(--accent-ink); display: grid; place-items: center; }
+.wave { flex: none; color: var(--ink-soft); display: grid; place-items: center; }
 .wave svg { width: 18px; height: 18px; }
 
 @media (prefers-reduced-motion: reduce) {

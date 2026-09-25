@@ -2,8 +2,10 @@
   Button styles, shared by all three Button.tsx exports.
 
   .base holds the shape and motion; .primary / .secondary / .quiet only change
-  colour. .primary picks up --accent on hover, so a button inside a volume's
-  page turns that volume's cover colour without any extra CSS.
+  colour. .primary lightens from ink to --ink-soft on hover (paper text on it
+  measures 6.85:1). It used to take --accent, the page's volume colour; with
+  the site default now the paper colour, that would have painted paper text
+  on a paper background and the label would have vanished on hover.
 */
 .base {
   position: relative;
@@ -33,7 +35,7 @@
   color: var(--paper);
   box-shadow: 0 6px 20px -12px rgba(26, 22, 18, 0.9);
 }
-.primary:hover { background: var(--accent); box-shadow: 0 12px 26px -14px var(--accent); }
+.primary:hover { background: var(--ink-soft); box-shadow: 0 12px 26px -14px rgba(26, 22, 18, 0.9); }
 
 .secondary {
   background: transparent;

@@ -5,8 +5,12 @@
  * that has not been published yet still appears, shown as "coming soon". That
  * is how volume 4 is visible before its PDF exists.
  *
- * Each row sets --accent to its own volume's cover colour, which the row
- * background, border and buttons all pick up automatically.
+ * Each row sets --accent to its own volume's cover colour, but nothing on the
+ * page paints with it: the rows are neutral, so the covers are the only
+ * colour here (see Library.module.css). The colour is set anyway so it stays
+ * one line of CSS away — `var(--accent)` for a background or border,
+ * `var(--accent-ink)` for text — should any element in a row ever want its
+ * volume's colour.
  */
 import { motion } from 'framer-motion';
 import styles from './Library.module.css';

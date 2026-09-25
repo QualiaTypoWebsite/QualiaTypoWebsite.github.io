@@ -55,17 +55,19 @@
   --paper-sunk: #f3eee7;
   --ink: #1a1a1a;
   --ink-soft: #5b5651;
-  /* Every colour below was measured against the five surfaces this site
-     actually paints — paper, sunk paper, the blush and periwinkle section
-     washes, and the reader's accent glow at volume 4's yellow, which is the
-     lightest background anywhere here. A colour that clears 4.5:1 on paper but
-     fails on a wash is not fixed, so the worst of the five is the one quoted.
+  /* Every colour below was measured against the three surfaces this site
+     actually paints — paper, sunk paper, and the reader's accent glow at
+     volume 4's yellow. A colour that clears 4.5:1 on paper but fails on
+     another surface is not fixed, so the worst of the three is the one quoted
+     (today that is always sunk paper). The homepage used to have two more,
+     the blush and periwinkle section washes; they were the darkest surfaces
+     and removing them raised every figure here slightly.
 
      --ink-faint was #9a938b, which measured 2.87:1 and so failed WCAG 1.4.3
      everywhere it was used — and it was used for the whole footer, every
      section eyebrow, the hero tagline, the scroll hint and the reader hint.
      Darkening the one token fixed all of them at once. */
-  --ink-faint: #6e675f; /* 4.74:1 worst case — WCAG 1.4.3 AA */
+  --ink-faint: #6e675f; /* 4.83:1 worst case — WCAG 1.4.3 AA */
   --rule: #e2dbd1;
   /* The boundary of anything you can operate: toolbar buttons, the language
      pill, the menu toggle, quiet buttons. WCAG 1.4.11 wants 3:1 for those, and
@@ -73,7 +75,7 @@
      separators — the footer's top line, the section dividers — where no
      information is carried by the line and the site would only lose its
      lightness for nothing. */
-  --rule-strong: #8a8279; /* 3.22:1 worst case — WCAG 1.4.11 AA */
+  --rule-strong: #8a8279; /* 3.28:1 worst case — WCAG 1.4.11 AA */
 
   /* The focus ring. It used to be var(--accent), which meant that on a volume
      4 page it was drawn in #f5e849 at 1.20:1 — a focus indicator you could not
@@ -81,8 +83,13 @@
      draws the ring *outside* the element, on the paper-toned surface behind it,
      never on the element's own colour. Kept as a token so the high-contrast
      mode in src/a11y/ can flip it in one line. */
-  --focus-ring: #1a1a1a; /* 14.79:1 worst case */
+  --focus-ring: #1a1a1a; /* 15.08:1 worst case */
 
+  /* The pastels. Tints of the cover colours, kept as tokens for later use.
+     --blush and --periwinkle were the homepage section washes, which the
+     owner asked to remove; nothing paints them today. They are not among the
+     surfaces the ratios above were measured on, so a text colour drawn on a
+     pastel background needs re-measuring against it. */
   --blush: #f7d9e9;
   --periwinkle: #d9def0;
   --celadon: #e4edc9;
@@ -93,8 +100,24 @@
   --vol-3: #9ac01b;
   --vol-4: #f5e849;
 
-  /* Set per-volume on the reader and library rows. Defaults to vol 1. */
-  --accent: var(--vol-1);
+  /* A volume's cover colour, set per volume where a page belongs to one: the
+     reader, the audio player card while it plays that volume, and each social
+     button (which borrows a volume colour). Everywhere else it is the paper
+     colour, so an element that reaches for --accent without a volume of its
+     own blends into the page instead of turning volume 1's pink — the
+     homepage, the library and the audio library are deliberately colourless,
+     at the owner's request, and the covers are the only colour on them.
+
+     The library rows and audio library sections still *set* --accent to
+     their volume's colour; they just do not paint with it. So the colours
+     stay available: var(--accent) / var(--accent-ink) inside a row, and
+     --vol-1 … --vol-4 above anywhere at all.
+
+     One consequence to know about: at this default, --accent-ink (below)
+     is paper mixed into ink and measures only 4.48:1 on paper — just under
+     AA. So text outside a volume must not use --accent-ink; use --ink-faint
+     or darker. */
+  --accent: var(--paper);
 
   /* The same volume colour, but safe to write *with*.
      --accent is a cover colour at full saturation, and two of the four are

@@ -267,8 +267,9 @@ colours are what make it accessible — see the Accessibility section of
 | File | What it does |
 |------|--------------|
 | `Home.tsx` | Hero (title, buttons, covers) plus the About and About‑us sections. |
-| `Library.tsx` | Every volume as a row, with Read and Download. Also the way in to the audio library. |
-| `AudioLibrary.tsx` | The recordings, one collapsible section per volume. Volume 3 gets a section too, saying there is nothing yet. |
+| `Library.tsx` | Every volume as a row, with Read and Download. Also the way in to the audio library. The rows look neutral, but each sets `--accent` to its volume's colour for any element that wants it. |
+| `AudioLibrary.tsx` | The recordings, one collapsible section per volume. Volume 3 gets a section too, saying there is nothing yet. Neutral like the library rows, with the same unpainted `--accent`; the current recording is marked by its filled button and sound-wave icon. |
+| `colourless.test.ts` | Reads the stylesheets of the homepage, library and audio library and fails if one paints with a volume colour or pastel — the guard on the owner's choice that those pages stay colourless. |
 | `Reader.tsx` | The toolbar, the flipbook, and the thumbnail strip. Keeps the current page in the URL as `?page=12`. |
 | `NotFound.tsx` | The 404 page. |
 
@@ -293,11 +294,34 @@ Modules means class names are scoped automatically: `.title` in
 
 ### The colours
 
-`--paper`, `--ink` and the pastels are the site's chrome. `--vol-1` … `--vol-4`
-are the covers' own colours, taken from the artwork. The rule the design
-follows: **the pastels are for the site, the saturated colours belong to the
-magazines.** On a volume's page, `--accent` is set to that volume's colour and
-the buttons, focus rings and glow pick it up automatically.
+`--paper`, `--ink` and their quieter variants are the site's chrome. `--vol-1`
+… `--vol-4` are the covers' own colours, taken from the artwork. The rule the
+design follows: **the saturated colours belong to the magazines.** On a
+volume's page — the reader — `--accent` is set to that volume's colour and the
+toolbar states and the glow behind the book pick it up automatically. The audio
+player card does the same for the volume it is playing, and each social button
+borrows one volume colour.
+
+Everywhere else nothing is *painted* with a volume colour. The homepage
+sections, the library rows and the audio library sections are plain paper with
+thin `--rule` borders, and a `--paper-sunk` tint on hover; they used to carry
+pastel washes and per-volume tints, removed at the owner's request so the
+covers are the only colour on those pages. `src/routes/colourless.test.ts`
+keeps it that way.
+
+The colours themselves were kept, on purpose, for later use:
+
+- the library rows and audio sections still set `--accent` to their volume's
+  colour, so inside a row `var(--accent)` (backgrounds, borders) or
+  `var(--accent-ink)` (text) gives that volume's colour with no other change;
+- `--vol-1` … `--vol-4` in `global.css` give any one cover colour anywhere;
+- `--blush`, `--periwinkle`, `--celadon` and `--butter` are the pastel tints;
+- `VOLUME_META[n].accent` and `accentFor(n)` in `src/data/volumes.ts` give the
+  same colours to TypeScript.
+
+The default `--accent` in `global.css` is `var(--paper)`: anything that reaches
+for it without a volume of its own blends into the page. The primary button's
+hover, which used to borrow `--accent`, lightens to `--ink-soft` instead.
 
 ### Colour, and the two accent tokens
 
@@ -305,9 +329,11 @@ the buttons, focus rings and glow pick it up automatically.
 light: volume 3's green measures 2.00:1 against the paper and volume 4's yellow
 1.20:1, both far below the 4.5:1 that text needs. So there are two tokens.
 `--accent` is for backgrounds, borders and glows; **`--accent-ink` is for
-anything a reader has to make out** — the "ΠΕΡΙΟΔΙΚΟ 4" labels, the active toolbar
-toggle, the current thumbnail. It is the same colour mixed 40% into ink, which
-is the largest share that still clears 4.5:1 for every volume.
+anything a reader has to make out** — the active toolbar toggle, the current
+thumbnail, the player's "now playing" line. It is the same colour mixed 40% into
+ink, which is the largest share that still clears 4.5:1 for every volume. At the
+paper default it does *not* (4.48:1), which is why the library's "ΤΕΥΧΟΣ N"
+labels, belonging to no single colour now, use `--ink-faint`.
 
 It is declared on `*` rather than on `:root`, and that is not an accident: a
 `var()` inside a custom property is substituted on the element that *declares*
